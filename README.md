@@ -75,7 +75,7 @@ A configuração do Supabase local (auth, portas, senha mínima, confirmação d
 | `npm run typecheck` | Checa os tipos do TypeScript |
 | `npm test` | Testes rápidos, sem banco (Vitest, arquivos `src/**/*.test.ts`) |
 | `npm run test:watch` | Mesmo que o anterior, repetindo a cada arquivo salvo |
-| `npm run test:db` | Testes de integração contra o Supabase local (`tests/**/*.test.ts`) |
+| `npm run test:db` | Testes de integração contra o Supabase local (`tests/**/*.test.ts`). Criam contas de teste e confirmam o e-mail pelo Mailpit |
 | `npm run db:start` | Sobe o Supabase local |
 | `npm run db:stop` | Derruba o Supabase local (os dados ficam guardados) |
 | `npm run db:reset` | Apaga o banco local e recria rodando todas as migrações |
@@ -99,10 +99,14 @@ vitest.db.config.mts          Testes de banco: lê URL e chave do "supabase stat
 src/proxy.ts                  Roda antes de cada página: renova a sessão e barra quem não está logado
 src/lib/supabase/server.ts    Cria o cliente Supabase no servidor (lê/grava a sessão nos cookies)
 src/lib/auth.ts               getUsuario(): quem está logado? (ou redireciona para /login)
+src/lib/oficina.ts            getOficina(): oficina do usuário (ou redireciona para /onboarding)
+src/lib/validacao-oficina.ts  Validação de nome e WhatsApp da oficina (com testes ao lado)
+src/components/               Componentes usados em mais de uma tela
 next.config.ts                "/" → redireciona para /painel
 src/app/login/                Tela de login/cadastro + ações entrar, cadastrar, sair
 src/app/auth/callback/        Recebe o link de confirmação do e-mail e cria a sessão
-src/app/painel/               Área logada da oficina
+src/app/onboarding/           Primeira tela após o cadastro: nome e WhatsApp da oficina
+src/app/painel/               Área logada da oficina (configurações em painel/configuracoes)
 ```
 
 ## Observações sobre o Next.js 16

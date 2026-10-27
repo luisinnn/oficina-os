@@ -27,10 +27,13 @@ function ambienteLocal(): Record<string, string> {
 
   const url = valores.get("API_URL");
   const chave = valores.get("PUBLISHABLE_KEY");
-  if (!url || !chave) {
-    throw new Error('Não achei API_URL/PUBLISHABLE_KEY no "supabase status".');
+  // Mailpit: caixa de e-mail falsa local. Os testes pegam nela o link de
+  // confirmação do cadastro, como o usuário faria clicando no e-mail.
+  const mailpit = valores.get("MAILPIT_URL");
+  if (!url || !chave || !mailpit) {
+    throw new Error('Não achei API_URL/PUBLISHABLE_KEY/MAILPIT_URL no "supabase status".');
   }
-  return { SUPABASE_URL: url, SUPABASE_PUBLISHABLE_KEY: chave };
+  return { SUPABASE_URL: url, SUPABASE_PUBLISHABLE_KEY: chave, MAILPIT_URL: mailpit };
 }
 
 export default defineConfig({
