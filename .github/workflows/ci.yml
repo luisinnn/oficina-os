@@ -1,0 +1,53 @@
+# CI: roda a cada push na main e em todo pull request.
+# Se qualquer passo falhar, o check fica vermelho no GitHub.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Se chegar um push novo no mesmo branch, cancela a execução antiga.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+# O workflow só precisa ler o código.
+permissions:
+  contents: read
+
+jobs:
+  verificar:
+    name: Lint, tipos, testes e build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Baixar o código
+        uses: actions/checkout@v7
+
+      - name: Instalar Node.js 24
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm # reaproveita downloads do npm entre execuções
+
+      - name: Instalar dependências (exatamente as do package-lock.json)
+        run: npm ci
+
+      - name: Lint (ESLint)
+        run: npm run lint
+
+      - name: Checagem de tipos (TypeScript)
+        run: npm run typecheck
+
+      - name: Testes (Vitest)
+        run: npm test
+
+      - name: Build de produção
+        run: npm run build
+        env:
+          # O build só precisa que as variáveis existam; ele não conecta no
+          # Supabase. Valores falsos evitam colocar segredos no CI.
+          NEXT_PUBLIC_SUPABASE_URL: https://exemplo.supabase.co
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: chave-falsa-para-build
