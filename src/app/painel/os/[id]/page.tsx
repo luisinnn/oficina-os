@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import { formatarDataHora, formatarTelefone } from "@/lib/formatos";
 import { buscarOrdem } from "@/lib/ordens";
 import { ROTULO_STATUS } from "@/lib/status-ordem";
@@ -8,7 +9,15 @@ import { ROTULO_STATUS } from "@/lib/status-ordem";
 export const metadata: Metadata = { title: "OS | oficina-os" };
 
 // Detalhe da OS. (Mudar status entra no ticket 05; orçamento no 06.)
-export default async function OrdemPage({ params }: PageProps<"/painel/os/[id]">) {
+export default function OrdemPage({ params }: PageProps<"/painel/os/[id]">) {
+  return (
+    <Suspense fallback={<p className="text-sm text-zinc-400">Carregando...</p>}>
+      <DetalheOs params={params} />
+    </Suspense>
+  );
+}
+
+async function DetalheOs({ params }: Pick<PageProps<"/painel/os/[id]">, "params">) {
   const { id } = await params;
   const os = await buscarOrdem(id);
   if (!os) notFound();

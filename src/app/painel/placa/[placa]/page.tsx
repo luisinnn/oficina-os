@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
 import { formatarDataHora, formatarTelefone, normalizarPlaca, validarPlaca } from "@/lib/formatos";
 import { buscarCarro } from "@/lib/ordens";
 import { ROTULO_STATUS, textoOsAberta } from "@/lib/status-ordem";
@@ -10,7 +11,15 @@ const classeBotao =
   "flex min-h-12 w-full items-center justify-center rounded-md bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700";
 
 // Resultado da busca por placa: dono atual e histórico, ou "Placa nova".
-export default async function PlacaPage({ params }: PageProps<"/painel/placa/[placa]">) {
+export default function PlacaPage({ params }: PageProps<"/painel/placa/[placa]">) {
+  return (
+    <Suspense fallback={<p className="text-sm text-zinc-400">Carregando...</p>}>
+      <ResultadoPlaca params={params} />
+    </Suspense>
+  );
+}
+
+async function ResultadoPlaca({ params }: Pick<PageProps<"/painel/placa/[placa]">, "params">) {
   // O Next entrega o trecho da URL ainda codificado ("ABC%201234").
   const placa = normalizarPlaca(decodeURIComponent((await params).placa));
 

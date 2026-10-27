@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
 import { listarOrdensAtivas, type OrdemAtiva } from "@/lib/ordens";
 import { ROTULO_STATUS, STATUS_ABERTOS } from "@/lib/status-ordem";
 import { FormBuscaPlaca } from "./form-busca-placa";
@@ -7,9 +8,7 @@ import { FormBuscaPlaca } from "./form-busca-placa";
 export const metadata: Metadata = { title: "Painel | oficina-os" };
 
 // Tela inicial: buscar placa, abrir OS e ver as OS que estão na oficina.
-export default async function PainelPage() {
-  const ordens = await listarOrdensAtivas();
-
+export default function PainelPage() {
   return (
     <div className="mx-auto max-w-2xl space-y-8">
       <section className="space-y-4">
@@ -24,6 +23,18 @@ export default async function PainelPage() {
 
       {/* Ticket 09: "Pré-cadastros para confirmar" entra aqui. */}
 
+      {/* Ler as OS depende do usuário logado: a busca e o botão aparecem na hora. */}
+      <Suspense fallback={<p className="text-sm text-zinc-400">Carregando...</p>}>
+        <OrdensAbertas />
+      </Suspense>
+    </div>
+  );
+}
+
+async function OrdensAbertas() {
+  const ordens = await listarOrdensAtivas();
+  return (
+    <div className="space-y-8">
       {STATUS_ABERTOS.map((status) => (
         <Grupo
           key={status}
