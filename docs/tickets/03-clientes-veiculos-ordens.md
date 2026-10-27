@@ -29,7 +29,7 @@ banco (não só pelo app).
 
 ## Critérios de aceite
 
-- [ ] Duas OS na mesma oficina recebem #1 e #2; em outra oficina a primeira é #1.
-- [ ] Inserir 2ª OS aberta para o mesmo carro falha no banco.
-- [ ] Inserir OS apontando para veículo de outra oficina falha.
-- [ ] Testes de banco: A não lê/edita clientes, veículos e OS de B; anônimo não lê nada.
+- [x] Duas OS na mesma oficina recebem #1 e #2; em outra oficina a primeira é #1.
+- [x] Inserir 2ª OS aberta para o mesmo carro falha no banco.
+- [x] Inserir OS apontando para veículo de outra oficina falha.
+- [x] Testes de banco: A não lê/edita clientes, veículos e OS de B; anônimo não lê nada.

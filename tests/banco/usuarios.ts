@@ -51,3 +51,16 @@ async function linkDeConfirmacao(email: string): Promise<string> {
   }
   throw new Error(`E-mail de confirmação não chegou no Mailpit para ${email}.`);
 }
+
+export type UsuarioComOficina = UsuarioTeste & { oficina: string };
+
+// Usuário confirmado que já passou pelo onboarding (tem oficina).
+export async function criarUsuarioComOficina(apelido: string): Promise<UsuarioComOficina> {
+  const u = await criarUsuarioConfirmado(apelido);
+  const { data, error } = await u.supabase.rpc("criar_oficina", {
+    nome: `Oficina ${apelido}`,
+    telefone: "47999990000",
+  });
+  if (error) throw new Error(`criar_oficina falhou: ${error.message}`);
+  return { ...u, oficina: data as string };
+}

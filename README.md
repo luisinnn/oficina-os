@@ -101,6 +101,7 @@ src/lib/supabase/server.ts    Cria o cliente Supabase no servidor (lê/grava a s
 src/lib/auth.ts               getUsuario(): quem está logado? (ou redireciona para /login)
 src/lib/oficina.ts            getOficina(): oficina do usuário (ou redireciona para /onboarding)
 src/lib/validacao-oficina.ts  Validação de nome e WhatsApp da oficina (com testes ao lado)
+src/lib/formatos.ts           Placa e telefone: normalizar e validar (mesmos formatos do banco)
 src/components/               Componentes usados em mais de uma tela
 next.config.ts                "/" → redireciona para /painel
 src/app/login/                Tela de login/cadastro + ações entrar, cadastrar, sair
