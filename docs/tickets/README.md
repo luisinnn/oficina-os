@@ -33,6 +33,8 @@ Primeiro cliente real: oficina do primo. Feito em cima do template
 - **Multi-oficina:** toda tabela de dados tem `oficina_id`. O RLS libera só a oficina do usuário logado (via `oficina_membros`). Na v1, 1 usuário = 1 oficina, papel único "dono".
 - **Partes públicas** (aprovação e pré-cadastro): só por funções no banco (`security definer`) com `grant execute` para `anon`. Anônimo **não** tem nenhuma permissão direta em tabela.
 - **Funções:** o Supabase dá `execute` para `anon` em funções novas por padrão. Toda migração que cria função faz `revoke execute ... from public, anon` e só libera o que for público de propósito.
+- **Colunas protegidas:** o Supabase dá `UPDATE` na tabela inteira para `authenticated`, e um `revoke` só de coluna não vence a permissão da tabela. Toda tabela com coluna que o usuário não pode mexer faz `revoke update on <tabela> from authenticated` + `grant update (col1, col2, ...)` só nas editáveis. Funções e triggers que mexem nas protegidas são `security definer`.
+- **`search_path = ''`** em toda função `security definer`. Com ele vazio, tudo vai com schema: `public.tabela`, `extensions.gen_random_bytes(...)`, `extensions.digest(...)` (o pgcrypto do Supabase fica no schema `extensions`).
 - **Dinheiro** em centavos (`integer`). **Telefone** só dígitos (10 ou 11, com DDD). **Placa** maiúscula sem hífen, formato antigo `ABC1234` ou Mercosul `ABC1D23`.
 - **Fuso:** datas mostradas em `America/Sao_Paulo`.
 - **Celular primeiro:** botões com no mínimo 48px de altura, uma ação principal por tela, teclado certo em cada campo (`inputmode`, `autocapitalize`).

@@ -9,12 +9,13 @@ as tabelas futuras se apoia nisso.
 
 ## Banco (migração)
 
-- `oficinas`: `id`, `nome` (1–100), `telefone` (dígitos, 10–11), `codigo_publico` (texto aleatório, único; usado no link de pré-cadastro), `proximo_numero_os` (inteiro, começa em 1), `created_at`.
+- `oficinas`: `id`, `nome` (1–100), `telefone` (dígitos, 10–11), `codigo_publico` (único; 12 caracteres base64url gerados de `extensions.gen_random_bytes(9)`, CHECK de tamanho ≥ 10, para ninguém adivinhar códigos; usado no link de pré-cadastro), `proximo_numero_os` (inteiro, começa em 1), `created_at`.
 - `oficina_membros`: `oficina_id`, `user_id` (**único** → 1 oficina por usuário na v1), `papel` (`check (papel = 'dono')`), `created_at`. `on delete cascade` dos dois lados.
 - Função `minha_oficina()` → `uuid` da oficina do usuário logado (`security definer`, `stable`, `set search_path = ''`). As políticas usam `(select public.minha_oficina())`.
-- RPC `criar_oficina(nome, telefone)` (só `authenticated`): cria oficina + membro "dono" numa transação; erro se o usuário já tem oficina. Gera o `codigo_publico` com `gen_random_bytes`.
+- RPC `criar_oficina(nome, telefone)` (só `authenticated`): cria oficina + membro "dono" numa transação; erro se o usuário já tem oficina. `security definer`, `set search_path = ''`, gera o código com `extensions.gen_random_bytes` (sem o prefixo `extensions.` dá "function does not exist").
 - RLS:
   - `oficinas`: membro lê e atualiza `nome`/`telefone` da própria. Sem insert/delete direto (insert só pela RPC).
+  - Permissão por coluna: `revoke update on public.oficinas from authenticated` + `grant update (nome, telefone) on public.oficinas to authenticated`. Só a policy não basta: ela filtra linhas, não colunas.
   - `oficina_membros`: membro lê a própria linha. Sem escrita direta.
 - `revoke all` de `anon` nas duas tabelas; `revoke execute` de `public, anon` nas funções.
 

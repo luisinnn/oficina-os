@@ -8,8 +8,10 @@ O cliente abre o link no celular, vê o orçamento e aprova ou recusa, sem login
 
 ## Banco (funções liberadas para `anon`)
 
-- `ver_orcamento(token)` → procura por `sha256(token)`; devolve **só**: nome da oficina, número da OS, placa, modelo, itens (tipo, descrição, qtd, valor), total, estado, `expirado` (bool). Nada de nome completo/telefone do cliente, ids internos ou observação interna.
+- `ver_orcamento(token)` → procura por `extensions.digest(token, 'sha256')`; devolve **só**: nome da oficina, número da OS, placa, modelo, itens (tipo, descrição, qtd, valor), total, estado, `expirado` (bool). Nada de nome completo/telefone do cliente, ids internos ou observação interna.
 - `responder_orcamento(token, aprovar, motivo)` → só aceita se estado = `enviado` e não expirado. Grava `aprovado`/`recusado`, `respondido_em`, `motivo_recusa` (até 500, só na recusa). Segunda resposta falha.
+  - **Uma operação só**, para o duplo clique não responder duas vezes: `update public.orcamentos set ... where token_hash = ... and estado = 'enviado' and token_expira_em > now() returning ...`. Se não voltar linha, responde "não encontrado". Nada de "ler, conferir e depois gravar".
+  - Na mesma transação, grava em `orcamento_respostas` (ticket 06) o total e a cópia dos itens daquele momento.
 - Token inválido, expirado ou anulado → a mesma resposta genérica "não encontrado", sem dizer qual dos casos.
 - `security definer` + `set search_path = ''`; `grant execute ... to anon` só nessas duas.
 
@@ -26,3 +28,4 @@ O cliente abre o link no celular, vê o orçamento e aprova ou recusa, sem login
 
 - [ ] Fluxo completo no celular: enviar (07) → abrir link → aprovar → etiqueta "aprovado" no painel.
 - [ ] Testes de banco: token errado, expirado, já respondido e anulado por edição → falham; anônimo continua sem acesso direto a `orcamentos`.
+- [ ] Duas chamadas de `responder_orcamento` ao mesmo tempo (`Promise.all`) → só uma dá certo, e só uma linha aparece em `orcamento_respostas`.

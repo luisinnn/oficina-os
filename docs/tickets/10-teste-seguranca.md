@@ -15,13 +15,15 @@ as rotas públicas só fazem o que devem. Obrigatório passar antes do deploy (1
 
 ## Casos — isolamento entre oficinas (A atacando B)
 
-- [ ] `select` em cada tabela (`oficinas`, `oficina_membros`, `clientes`, `veiculos`, `ordens`, `orcamentos`, `orcamento_itens`, `pre_cadastros`) só devolve linhas de A.
+- [ ] `select` em cada tabela (`oficinas`, `oficina_membros`, `clientes`, `veiculos`, `ordens`, `orcamentos`, `orcamento_itens`, `orcamento_respostas`, `pre_cadastros`) só devolve linhas de A.
+- [ ] Nem A consegue `update`/`delete` em `orcamento_respostas`, mesmo nas linhas da própria oficina (o histórico não se apaga).
 - [ ] `update`/`delete` em linhas de B por id → 0 linhas afetadas.
 - [ ] `insert` com `oficina_id` de B → recusado.
 - [ ] `insert` de OS de A apontando para veículo/cliente de B → recusado.
 - [ ] RPCs autenticadas (`criar_ordem`, `mudar_status`, `enviar_orcamento`, `confirmar_pre_cadastro`, `descartar_pre_cadastro`) com ids de B → erro.
 - [ ] A não consegue se colocar em `oficina_membros` da oficina de B.
-- [ ] A não altera colunas protegidas da própria oficina (`codigo_publico`, `proximo_numero_os`, `estado`/`token_hash` do orçamento) por update direto.
+- [ ] A não altera colunas protegidas da própria oficina por update direto: `oficinas.codigo_publico`, `oficinas.proximo_numero_os`, `ordens.status`/`numero`/`oficina_id`, qualquer coluna de `orcamentos`.
+- [ ] Teste "de catálogo": consulta `information_schema.column_privileges` e confere que `authenticated` só tem `UPDATE` nas colunas da lista permitida (pega `grant` esquecido em migração nova).
 
 ## Casos — anônimo
 

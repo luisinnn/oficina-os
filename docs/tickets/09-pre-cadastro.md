@@ -15,15 +15,17 @@ adianta; a oficina confere e transforma em OS.
   - acha a oficina pelo `codigo_publico`; código inválido → erro genérico;
   - normaliza e valida tudo no banco;
   - antispam: no máximo **20** pré-cadastros por oficina na última hora; no máximo **1 pendente por placa**;
+    - **limitação conhecida (aceita na v1):** quem mandar 20 falsos por hora bloqueia os clientes de verdade naquela hora. A saída é "Gerar novo link" (abaixo). Se acontecer, o próximo passo é captcha (Turnstile) ou limite por IP;
   - devolve só "ok" (nenhum dado da oficina ou do carro).
 - `nome_oficina_publico(codigo)` (`anon`) → só o nome, para o título da página.
 - `confirmar_pre_cadastro(id, trocar_dono bool)` (`authenticated`): cria/reaproveita cliente e veículo, cria OS `aguardando` com `origem = 'link'`, marca `confirmado`. Respeita a regra de 1 OS aberta por carro.
 - `descartar_pre_cadastro(id)` (`authenticated`).
-- `trocar_codigo_publico()` (`authenticated`): gera código novo; o link antigo morre na hora.
+- `trocar_codigo_publico()` (`authenticated`, `security definer`, `set search_path = ''`): gera código novo com `extensions.gen_random_bytes` (mesmo formato do ticket 02); o link antigo morre na hora.
 
 ## Telas
 
 - **`/p/[codigo]`** (público, liberado no `proxy.ts`): "Pré-cadastro — {oficina}", campos nome, telefone, placa, modelo, problema, botão "Enviar". Campo isca escondido (`name="site"`, fora da tela, `tabindex=-1`): se vier preenchido, a server action responde "ok" sem gravar. Sucesso: "Recebido! A oficina vai falar com você pelo WhatsApp."
+  - Aviso de privacidade (LGPD) acima do botão: "Seus dados são usados só pela {oficina} para atender o seu veículo."
 - **Painel**: seção "Pré-cadastros para confirmar" com contador. Abrir mostra os dados; se a placa já existe com outro dono, mostra lado a lado e oferece "Manter {atual}" / "Trocar dono para {novo}". Botões **Confirmar** e **Descartar**.
 - **Configurações**: link de pré-cadastro com botão "Copiar" e "Gerar novo link" (com confirmação).
 

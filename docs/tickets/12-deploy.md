@@ -6,6 +6,11 @@
 
 Colocar no ar para o primo usar, com o banco de produção idêntico ao testado.
 
+## Decisões pendentes (resolver antes de começar este ticket)
+
+- **Hospedagem:** o plano grátis da Vercel (Hobby) é só para uso pessoal, não comercial, e a oficina do primo é uso comercial. As opções são Vercel Pro (pago), outra hospedagem grátis que permita uso comercial, ou servidor próprio (ex.: EC2 t3.micro). Se não for Vercel, os passos 3 e 7 mudam bastante (Docker/Node no servidor, HTTPS, deploy pelo GitHub Actions).
+- **Repositório público ou privado:** público é bom para o portfólio, mas com cliente pagante o normal é privado (muitos contratos exigem). Se virar privado, o backup (11) fica mais simples, e o portfólio pode mostrar uma cópia sem dados.
+
 ## Passos
 
 1. **Supabase:** criar o projeto (região São Paulo). `npx supabase link` + `npx supabase db push` para aplicar as migrações.

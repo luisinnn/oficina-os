@@ -12,7 +12,8 @@ Mover a OS pelo fluxo com um toque, sem deixar estados impossíveis.
 - **Avançar** um passo; **voltar** um passo (exceto a partir de `entregue`).
 - **Cancelar** de qualquer status menos `entregue`. Cancelada não volta.
 - Ao entrar em `entregue`, grava `entregue_em`.
-- Regras aplicadas numa RPC `mudar_status(ordem_id, novo_status)` que confere a transição; o update direto da coluna `status` fica bloqueado (trigger ou coluna fora do `grant update`).
+- Regras aplicadas numa RPC `mudar_status(ordem_id, novo_status)` que confere a transição e se a OS é da oficina do usuário. `security definer`, `set search_path = ''`.
+- Update direto de `status`, `entregue_em`, `numero`, `oficina_id` bloqueado por permissão de coluna: `revoke update on public.ordens from authenticated` + `grant update (problema, km, obs_interna) on public.ordens to authenticated`. (Revogar só a coluna não funciona enquanto existir o `UPDATE` da tabela inteira, que o Supabase dá por padrão.)
 - Função pura `proximoStatus` / `statusAnterior` / `podeCancelar` em `src/lib/` com testes Vitest (mesma tabela de transições do banco).
 
 ## Telas
@@ -24,3 +25,4 @@ Mover a OS pelo fluxo com um toque, sem deixar estados impossíveis.
 
 - [ ] Toda transição válida funciona; inválidas (ex.: `aguardando → entregue`, `cancelada → aguardando`) falham no banco.
 - [ ] Testes unitários das transições + teste de banco da RPC.
+- [ ] Teste de banco: `update ordens set status = 'entregue'` direto, como usuário logado, dá erro de permissão.

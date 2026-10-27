@@ -8,10 +8,10 @@ Um toque gera o link de aprovação e abre o WhatsApp com a mensagem pronta.
 
 ## Banco
 
-- RPC `enviar_orcamento(ordem_id)` (`authenticated`, só membro da oficina):
+- RPC `enviar_orcamento(ordem_id)` (`authenticated`, só membro da oficina; `security definer`, `set search_path = ''`, porque `orcamentos` não tem `UPDATE` para o usuário):
   - exige ao menos 1 item;
-  - gera token com `gen_random_bytes(32)` em base64url (~43 caracteres);
-  - grava só `token_hash = sha256(token)`, `token_expira_em = now() + 30 days`, `estado = 'enviado'`, `enviado_em = now()`;
+  - gera token com `extensions.gen_random_bytes(32)` em base64url (~43 caracteres);
+  - grava só `token_hash = extensions.digest(token, 'sha256')`, `token_expira_em = now() + 30 days`, `estado = 'enviado'`, `enviado_em = now()`;
   - devolve o token **uma única vez** (não dá para recuperar depois; reenviar gera outro e anula o anterior).
 
 ## App

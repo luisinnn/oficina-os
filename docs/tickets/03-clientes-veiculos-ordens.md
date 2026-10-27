@@ -17,7 +17,7 @@ banco (não só pelo app).
   - `status`: `aguardando | em_servico | pronto | entregue | cancelada`.
   - `origem`: `balcao | link`.
   - `created_at`, `updated_at`, `entregue_em`.
-- Número da OS: trigger `before insert` pega `oficinas.proximo_numero_os` com `for update` e incrementa. **Único** `(oficina_id, numero)`.
+- Número da OS: trigger `before insert` pega `oficinas.proximo_numero_os` com `for update` e incrementa. **Único** `(oficina_id, numero)`. A função do trigger é `security definer` (`search_path = ''`), porque o usuário não tem `UPDATE` na coluna `proximo_numero_os` (ticket 02).
 - Uma OS aberta por carro: índice único parcial em `ordens (veiculo_id) where status not in ('entregue','cancelada')`.
 - `oficina_id` preenchido por default `minha_oficina()` e **conferido** pelas políticas (`with check`), além de checar que `veiculo_id`/`cliente_id` são da mesma oficina (trigger ou FK composta `(oficina_id, id)`).
 - RLS nas três tabelas: select/insert/update só da própria oficina. Sem delete na v1 (OS se cancela, não se apaga).
