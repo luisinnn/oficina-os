@@ -20,6 +20,28 @@ export function estaAberta(status: StatusOrdem): boolean {
   return (STATUS_ABERTOS as readonly StatusOrdem[]).includes(status);
 }
 
+// Transições (as mesmas da função mudar_status, migração *_mudar_status.sql):
+// avança e volta um passo pelo FLUXO; entregue não volta; cancela de
+// qualquer status aberto; cancelada não volta.
+const FLUXO = ["aguardando", "em_servico", "pronto", "entregue"] as const satisfies StatusOrdem[];
+
+// -1 = fora do fluxo (cancelada).
+const posicaoNoFluxo = (status: StatusOrdem) => (FLUXO as readonly StatusOrdem[]).indexOf(status);
+
+export function proximoStatus(status: StatusOrdem): StatusOrdem | null {
+  const i = posicaoNoFluxo(status);
+  return i === -1 ? null : (FLUXO[i + 1] ?? null);
+}
+
+export function statusAnterior(status: StatusOrdem): StatusOrdem | null {
+  if (!estaAberta(status)) return null;
+  return FLUXO[posicaoNoFluxo(status) - 1] ?? null;
+}
+
+export function podeCancelar(status: StatusOrdem): boolean {
+  return estaAberta(status);
+}
+
 // "Este carro já está na OS #12 (em serviço)."
 export function textoOsAberta(numero: number, status: StatusOrdem): string {
   return `Este carro já está na OS #${numero} (${ROTULO_STATUS[status].toLowerCase()}).`;

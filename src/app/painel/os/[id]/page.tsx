@@ -5,10 +5,11 @@ import { Suspense } from "react";
 import { formatarDataHora, formatarTelefone } from "@/lib/formatos";
 import { buscarOrdem } from "@/lib/ordens";
 import { ROTULO_STATUS } from "@/lib/status-ordem";
+import { AcoesStatus } from "./acoes-status";
 
 export const metadata: Metadata = { title: "OS | oficina-os" };
 
-// Detalhe da OS. (Mudar status entra no ticket 05; orçamento no 06.)
+// Detalhe da OS com os botões de status. (Orçamento entra no ticket 06.)
 export default function OrdemPage({ params }: PageProps<"/painel/os/[id]">) {
   return (
     <Suspense fallback={<p className="text-sm text-zinc-400">Carregando...</p>}>
@@ -31,6 +32,8 @@ async function DetalheOs({ params }: Pick<PageProps<"/painel/os/[id]">, "params"
         </span>
       </div>
 
+      <AcoesStatus ordemId={os.id} status={os.status} />
+
       <dl className="space-y-3 rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
         <Item rotulo="Carro">
           <Link href={`/painel/placa/${os.veiculos.placa}`} className="font-semibold text-blue-700 underline">
@@ -51,6 +54,7 @@ async function DetalheOs({ params }: Pick<PageProps<"/painel/os/[id]">, "params"
           </Item>
         )}
         <Item rotulo="Entrada">{formatarDataHora(os.created_at)}</Item>
+        {os.entregue_em && <Item rotulo="Entregue">{formatarDataHora(os.entregue_em)}</Item>}
       </dl>
 
       <Link href="/painel" className="flex min-h-12 items-center font-medium text-blue-600 hover:underline">

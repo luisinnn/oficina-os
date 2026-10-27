@@ -103,7 +103,7 @@ src/lib/oficina.ts            getOficina(): oficina do usuário (ou redireciona 
 src/lib/validacao-oficina.ts  Validação de nome e WhatsApp da oficina (com testes ao lado)
 src/lib/formatos.ts           Placa e telefone: normalizar, validar e mostrar; data no fuso de SP
 src/lib/validacao-ordem.ts    Validação do formulário da nova OS (com testes ao lado)
-src/lib/status-ordem.ts       Status da OS e os nomes que aparecem na tela
+src/lib/status-ordem.ts       Status da OS: nomes na tela e transições (avançar, voltar, cancelar)
 src/lib/ordens.ts             Leituras de OS, carro (por placa) e cliente para as telas
 src/components/               Componentes usados em mais de uma tela
 next.config.ts                "/" → redireciona para /painel
@@ -113,7 +113,7 @@ src/app/onboarding/           Primeira tela após o cadastro: nome e WhatsApp da
 src/app/painel/               Área logada: tela inicial (busca por placa + OS abertas)
 src/app/painel/placa/[placa]/ Resultado da busca: dono, histórico, OS aberta ou "Placa nova"
 src/app/painel/os/nova/       Nova OS (chama a função criar_ordem do banco)
-src/app/painel/os/[id]/       Detalhe da OS
+src/app/painel/os/[id]/       Detalhe da OS e botões de status (função mudar_status do banco)
 src/app/painel/configuracoes/ Dados da oficina
 ```
 

@@ -34,6 +34,7 @@ export type Carro = {
 export type Ordem = OrdemResumo & {
   km: number | null;
   obs_interna: string | null;
+  entregue_em: string | null;
   veiculos: { placa: string; modelo: string };
   clientes: { nome: string; telefone: string };
 };
@@ -99,7 +100,7 @@ export async function buscarOrdem(id: string): Promise<Ordem | null> {
   const { data, error } = await supabase
     .from("ordens")
     .select(
-      "id, numero, status, problema, created_at, km, obs_interna, veiculos(placa, modelo), clientes(nome, telefone)",
+      "id, numero, status, problema, created_at, entregue_em, km, obs_interna, veiculos(placa, modelo), clientes(nome, telefone)",
     )
     .eq("id", id)
     .maybeSingle();
