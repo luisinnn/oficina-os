@@ -16,7 +16,7 @@ Primeiro cliente real: oficina do primo. Feito em cima do template
 | # | Ticket | Rótulos | Depende de | Feito |
 | --- | --- | --- | --- | --- |
 | 01 | [Infra: Supabase local, limpeza do template](01-infra-supabase-local.md) | infra | — | [x] |
-| 02 | [Oficinas, membros e onboarding](02-oficinas-e-membros.md) | banco, tela, segurança | 01 | [ ] |
+| 02 | [Oficinas, membros e onboarding](02-oficinas-e-membros.md) | banco, tela, segurança | 01 | [x] |
 | 03 | [Clientes, veículos e OS (banco)](03-clientes-veiculos-ordens.md) | banco, segurança | 02 | [ ] |
 | 04 | [Tela inicial, busca por placa e nova OS](04-tela-inicial-busca-nova-os.md) | tela | 03 | [ ] |
 | 05 | [Status da OS](05-status-da-os.md) | tela, banco | 04 | [ ] |
