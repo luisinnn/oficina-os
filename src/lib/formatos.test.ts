@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { normalizarPlaca, normalizarTelefone, validarPlaca, validarTelefone } from "./formatos";
+import {
+  formatarDataHora,
+  formatarTelefone,
+  normalizarPlaca,
+  normalizarTelefone,
+  validarPlaca,
+  validarTelefone,
+} from "./formatos";
 
 describe("placa", () => {
   it.each([
@@ -50,5 +57,29 @@ describe("telefone", () => {
 
   it("validarTelefone exige só dígitos", () => {
     expect(validarTelefone("(47) 99999-0000")).toBe(false);
+  });
+});
+
+describe("formatarTelefone", () => {
+  it.each([
+    ["47999990000", "(47) 99999-0000"],
+    ["4733330000", "(47) 3333-0000"],
+  ])("mostra %j como %j", (telefone, esperado) => {
+    expect(formatarTelefone(telefone)).toBe(esperado);
+  });
+
+  it("devolve como está o que não for telefone válido", () => {
+    expect(formatarTelefone("123")).toBe("123");
+  });
+});
+
+describe("formatarDataHora", () => {
+  it("mostra no fuso de São Paulo", () => {
+    // 15:30 em UTC = 12:30 em Brasília (UTC-3).
+    expect(formatarDataHora("2026-10-27T15:30:00Z")).toBe("27/10/2026 12:30");
+  });
+
+  it("vira o dia pelo fuso de São Paulo, não pelo UTC", () => {
+    expect(formatarDataHora("2026-10-28T01:00:00Z")).toBe("27/10/2026 22:00");
   });
 });

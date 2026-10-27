@@ -14,6 +14,8 @@ export function normalizarPlaca(digitada: string): string {
   return digitada.replace(/[\s-]/g, "").toUpperCase();
 }
 
+export const ERRO_PLACA = "Placa inválida: use ABC1234 ou ABC1D23.";
+
 export function validarPlaca(placa: string): boolean {
   return PLACA.test(placa);
 }
@@ -33,4 +35,27 @@ export function normalizarTelefone(digitado: string): string {
 
 export function validarTelefone(telefone: string): boolean {
   return TELEFONE.test(telefone);
+}
+
+// "47999990000" -> "(47) 99999-0000", para mostrar na tela.
+export function formatarTelefone(telefone: string): string {
+  const partes = telefone.match(/^([0-9]{2})([0-9]{4,5})([0-9]{4})$/);
+  return partes ? `(${partes[1]}) ${partes[2]}-${partes[3]}` : telefone;
+}
+
+// Data e hora no fuso da oficina (o servidor pode estar em UTC).
+const dataHora = new Intl.DateTimeFormat("pt-BR", {
+  timeZone: "America/Sao_Paulo",
+  day: "2-digit",
+  month: "2-digit",
+  year: "numeric",
+  hour: "2-digit",
+  minute: "2-digit",
+  hourCycle: "h23",
+});
+
+// "2026-10-27T15:30:00Z" -> "27/10/2026 12:30".
+export function formatarDataHora(iso: string): string {
+  const partes = Object.fromEntries(dataHora.formatToParts(new Date(iso)).map(({ type, value }) => [type, value]));
+  return `${partes.day}/${partes.month}/${partes.year} ${partes.hour}:${partes.minute}`;
 }

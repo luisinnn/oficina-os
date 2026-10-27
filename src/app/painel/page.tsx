@@ -1,14 +1,69 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import { listarOrdensAtivas, type OrdemAtiva } from "@/lib/ordens";
+import { ROTULO_STATUS, STATUS_ABERTOS } from "@/lib/status-ordem";
+import { FormBuscaPlaca } from "./form-busca-placa";
 
 export const metadata: Metadata = { title: "Painel | oficina-os" };
 
-// Página provisória: a tela inicial de verdade (busca, nova OS, pré-cadastros)
-// chega no ticket 04.
-export default function PainelPage() {
+// Tela inicial: buscar placa, abrir OS e ver as OS que estão na oficina.
+export default async function PainelPage() {
+  const ordens = await listarOrdensAtivas();
+
   return (
-    <section className="rounded-lg border border-dashed border-zinc-300 bg-white p-8 text-center">
-      <h1 className="text-lg font-semibold text-zinc-900">Em construção</h1>
-      <p className="mt-2 text-sm text-zinc-500">O painel da oficina vai aparecer aqui.</p>
+    <div className="mx-auto max-w-2xl space-y-8">
+      <section className="space-y-4">
+        <FormBuscaPlaca />
+        <Link
+          href="/painel/os/nova"
+          className="flex min-h-14 w-full items-center justify-center rounded-md bg-blue-600 px-4 text-lg font-semibold text-white hover:bg-blue-700"
+        >
+          + Nova OS
+        </Link>
+      </section>
+
+      {/* Ticket 09: "Pré-cadastros para confirmar" entra aqui. */}
+
+      {STATUS_ABERTOS.map((status) => (
+        <Grupo
+          key={status}
+          titulo={ROTULO_STATUS[status]}
+          ordens={ordens.filter((os) => os.status === status)}
+        />
+      ))}
+    </div>
+  );
+}
+
+function Grupo({ titulo, ordens }: { titulo: string; ordens: OrdemAtiva[] }) {
+  return (
+    <section>
+      <h2 className="mb-2 text-lg font-semibold text-zinc-900">
+        {titulo} <span className="font-normal text-zinc-500">({ordens.length})</span>
+      </h2>
+      {ordens.length === 0 ? (
+        <p className="text-sm text-zinc-500">Nenhuma OS.</p>
+      ) : (
+        <ul className="grid gap-3 sm:grid-cols-2">
+          {ordens.map((os) => (
+            <li key={os.id}>
+              <Link
+                href={`/painel/os/${os.id}`}
+                className="block rounded-xl border border-zinc-200 bg-white p-4 shadow-sm hover:border-blue-400"
+              >
+                <span className="flex items-baseline justify-between gap-2">
+                  <span className="text-2xl font-bold text-zinc-900">#{os.numero}</span>
+                  <span className="font-mono text-lg font-semibold tracking-wide text-zinc-800">
+                    {os.veiculos.placa}
+                  </span>
+                </span>
+                <span className="mt-1 block truncate text-zinc-700">{os.veiculos.modelo}</span>
+                <span className="block truncate text-zinc-500">{os.clientes.nome}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
     </section>
   );
 }
