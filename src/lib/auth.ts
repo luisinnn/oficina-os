@@ -8,7 +8,7 @@ export type Usuario = { id: string; email: string };
 
 // Retorna o usuário logado ou manda para /login.
 // cache() do React evita repetir a validação várias vezes na mesma requisição
-// (ex.: o cabeçalho e a lista pedem o usuário ao mesmo tempo).
+// (ex.: o cabeçalho e a página pedem o usuário ao mesmo tempo).
 export const getUsuario = cache(async (): Promise<Usuario> => {
   // connection() avisa o Next: "isto só roda numa requisição real".
   // Sem isso, o Next tenta pré-montar a página e reclama do Date.now()

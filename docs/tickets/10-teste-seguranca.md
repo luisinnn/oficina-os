@@ -10,7 +10,8 @@ as rotas públicas só fazem o que devem. Obrigatório passar antes do deploy (1
 ## Como
 
 - Testes Vitest em `tests/seguranca/` rodando no Supabase local (`npm run test:db`, também no CI).
-- Preparação: cria **dois usuários** (A e B) via `signUp` no banco local (confirmação de e-mail desligada no `config.toml` local), cada um com sua oficina, cliente, veículo, OS, orçamento enviado e pré-cadastro. Usa só a chave **publishable**, como um atacante usaria.
+- Preparação: cria **dois usuários** (A e B) via `signUp` no banco local, cada um com sua oficina, cliente, veículo, OS, orçamento enviado e pré-cadastro. Usa só a chave **publishable**, como um atacante usaria.
+  - A confirmação de e-mail fica **ligada** no `config.toml` local (igual à produção, decidido no ticket 01). O teste confirma A e B abrindo o link do e-mail pela API do Mailpit local (`http://127.0.0.1:54324/api/v1/...`) e depois faz login com senha.
 - Cada teste usa o cliente Supabase autenticado como A, como B ou anônimo.
 
 ## Casos — isolamento entre oficinas (A atacando B)

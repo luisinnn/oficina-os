@@ -3,15 +3,15 @@ import { Suspense } from "react";
 import { getUsuario } from "@/lib/auth";
 import { sair } from "@/app/login/actions";
 
-// Layout = moldura que envolve todas as páginas dentro de /clientes.
-// "children" é a página atual (lista, novo, editar).
-export default function ClientesLayout({ children }: LayoutProps<"/clientes">) {
+// Layout = moldura que envolve todas as páginas dentro de /painel.
+// "children" é a página atual.
+export default function PainelLayout({ children }: LayoutProps<"/painel">) {
   return (
     <div className="flex flex-1 flex-col bg-zinc-50">
       <header className="border-b border-zinc-200 bg-white">
         <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-3">
-          <Link href="/clientes" className="font-semibold text-zinc-900">
-            Cadastro de Clientes
+          <Link href="/painel" className="font-semibold text-zinc-900">
+            oficina-os
           </Link>
           {/* Ler a sessão depende da requisição, então fica atrás de um
               Suspense: o cabeçalho aparece na hora e o e-mail chega depois. */}
@@ -32,7 +32,7 @@ async function MenuUsuario() {
       <span className="text-zinc-600">{usuario.email}</span>
       {/* Formulário que chama a Server Action "sair" (logout). */}
       <form action={sair}>
-        <button type="submit" className="font-medium text-blue-600 hover:underline">
+        <button type="submit" className="min-h-12 font-medium text-blue-600 hover:underline">
           Sair
         </button>
       </form>

@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 
 // GET /auth/callback?code=...
 // O link do e-mail de confirmação traz um "code" de uso único. Trocamos esse
-// code por uma sessão (cookies de login) e mandamos o usuário para a lista.
+// code por uma sessão (cookies de login) e mandamos o usuário para o painel.
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = request.nextUrl;
   const code = searchParams.get("code");
@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
     const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
-      return NextResponse.redirect(`${origin}/clientes`);
+      return NextResponse.redirect(`${origin}/painel`);
     }
   }
 

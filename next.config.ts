@@ -1,10 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // "/" não tem tela própria: manda para a lista de clientes.
+  // "/" não tem tela própria: manda para o painel.
   // (Se não estiver logado, o proxy ainda desvia para /login.)
   async redirects() {
-    return [{ source: "/", destination: "/clientes", permanent: false }];
+    return [{ source: "/", destination: "/painel", permanent: false }];
   },
   cacheComponents: true,
   partialPrefetching: true,

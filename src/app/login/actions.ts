@@ -33,12 +33,12 @@ export async function entrar(
     return { erro: "E-mail ou senha inválidos (ou e-mail ainda não confirmado)." };
   }
 
-  // Login OK: o Supabase já gravou o cookie de sessão. Vai para a lista.
-  redirect("/clientes");
+  // Login OK: o Supabase já gravou o cookie de sessão. Vai para o painel.
+  redirect("/painel");
 }
 
-// Mesmo valor do minLength em form-login.tsx e da senha mínima no painel do
-// Supabase (Authentication > Sign In / Providers > Email).
+// Mesmo valor do minLength em form-login.tsx e do minimum_password_length do
+// Supabase (supabase/config.toml no local; painel do Supabase em produção).
 const SENHA_MIN = 8;
 
 // Endereço oficial do site, usado no link de confirmação do e-mail.
@@ -98,7 +98,7 @@ export async function cadastrar(
   }
 
   // Se a confirmação de e-mail estiver DESLIGADA no Supabase, já vem sessão.
-  if (data.session) redirect("/clientes");
+  if (data.session) redirect("/painel");
 
   // Se estiver LIGADA (padrão), o usuário precisa clicar no link do e-mail.
   return {

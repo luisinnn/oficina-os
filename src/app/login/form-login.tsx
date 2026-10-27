@@ -25,7 +25,7 @@ export function FormLogin() {
       <h1 className="mb-1 text-2xl font-semibold text-zinc-900">
         {ehEntrar ? "Entrar" : "Criar conta"}
       </h1>
-      <p className="mb-6 text-sm text-zinc-500">Cadastro de Clientes</p>
+      <p className="mb-6 text-sm text-zinc-500">oficina-os</p>
 
       <form action={ehEntrar ? acaoEntrar : acaoCadastrar} className="space-y-4">
         <label className="block">

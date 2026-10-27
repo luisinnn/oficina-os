@@ -5,7 +5,7 @@ import { NextResponse, type NextRequest } from "next/server";
 // Duas tarefas:
 // 1) Renovar o token de login do Supabase quando ele está perto de expirar,
 //    gravando o cookie novo na resposta.
-// 2) Barrar quem não está logado nas rotas privadas (/clientes/...).
+// 2) Barrar quem não está logado nas rotas privadas (/painel/...).
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
 
@@ -44,13 +44,13 @@ export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Não logado tentando abrir área privada -> vai para o login.
-  if (!logado && pathname.startsWith("/clientes")) {
+  if (!logado && pathname.startsWith("/painel")) {
     return redirecionar(request, "/login", response);
   }
 
-  // Já logado abrindo a tela de login -> vai direto para a lista.
+  // Já logado abrindo a tela de login -> vai direto para o painel.
   if (logado && pathname === "/login") {
-    return redirecionar(request, "/clientes", response);
+    return redirecionar(request, "/painel", response);
   }
 
   return response;
