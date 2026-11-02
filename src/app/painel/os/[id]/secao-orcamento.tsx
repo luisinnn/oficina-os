@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { formatarReais } from "@/lib/dinheiro";
 import { formatarDataHora } from "@/lib/formatos";
-import { ROTULO_TIPO, subtotal, type TipoItem } from "@/lib/orcamento";
+import { foiEnviado, ROTULO_TIPO, subtotal, type TipoItem } from "@/lib/orcamento";
 import type { Orcamento } from "@/lib/ordens";
 import { EtiquetaOrcamento } from "../../etiqueta-orcamento";
+import { BotaoWhatsApp } from "./botao-whatsapp";
 
 // Orçamento no detalhe da OS: itens, total, botões de adicionar e o
 // histórico de respostas do cliente (fica mesmo depois de editar).
@@ -44,6 +45,10 @@ export function SecaoOrcamento({ ordemId, orcamento }: { ordemId: string; orcame
         <span className="text-lg font-medium text-zinc-700">Total</span>
         <span className="text-3xl font-bold text-zinc-900">{formatarReais(orcamento.total_centavos)}</span>
       </p>
+
+      {orcamento.itens.length > 0 && (
+        <BotaoWhatsApp ordemId={ordemId} jaEnviado={foiEnviado(orcamento.estado)} />
+      )}
 
       <div className="grid grid-cols-2 gap-3">
         <BotaoAdicionar href={urlNovoItem("peca")}>+ Peça</BotaoAdicionar>

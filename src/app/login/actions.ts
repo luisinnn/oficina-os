@@ -3,6 +3,7 @@
 // chama a função, mas o código (e as chaves) nunca vão para o navegador.
 
 import { redirect } from "next/navigation";
+import { urlDoSite } from "@/lib/site";
 import { createClient } from "@/lib/supabase/server";
 
 // Formato da resposta que volta para o formulário mostrar na tela.
@@ -40,23 +41,6 @@ export async function entrar(
 // Mesmo valor do minLength em form-login.tsx e do minimum_password_length do
 // Supabase (supabase/config.toml no local; painel do Supabase em produção).
 const SENHA_MIN = 8;
-
-// Endereço oficial do site, usado no link de confirmação do e-mail.
-// Vem de variável de ambiente, e não do cabeçalho "origin" da requisição,
-// porque esse cabeçalho pode ser forjado por quem chama.
-function urlDoSite(): string | null {
-  const configurada = process.env.NEXT_PUBLIC_SITE_URL;
-  if (configurada) return configurada.replace(/\/+$/, ""); // tira "/" do final
-
-  // Na Vercel: domínio de produção do projeto, preenchido pela própria Vercel.
-  const vercel = process.env.VERCEL_PROJECT_PRODUCTION_URL;
-  if (vercel) return `https://${vercel}`;
-
-  // Rodando local (npm run dev) sem a variável.
-  if (process.env.NODE_ENV === "development") return "http://localhost:3000";
-
-  return null;
-}
 
 export async function cadastrar(
   _estadoAnterior: EstadoAuth,
