@@ -21,7 +21,7 @@ Primeiro cliente real: oficina do primo. Feito em cima do template
 | 04 | [Tela inicial, busca por placa e nova OS](04-tela-inicial-busca-nova-os.md) | tela | 03 | [x] |
 | 05 | [Status da OS](05-status-da-os.md) | tela, banco | 04 | [x] |
 | 06 | [Orçamento: itens e total](06-orcamento.md) | banco, tela | 05 | [x] |
-| 07 | [Enviar orçamento pelo WhatsApp](07-envio-whatsapp.md) | banco, tela, segurança | 06 | [ ] |
+| 07 | [Enviar orçamento pelo WhatsApp](07-envio-whatsapp.md) | banco, tela, segurança | 06 | [x] |
 | 08 | [Página pública de aprovação](08-aprovacao-publica.md) | banco, tela, segurança | 07 | [ ] |
 | 09 | [Pré-cadastro público e confirmação](09-pre-cadastro.md) | banco, tela, segurança | 04 | [ ] |
 | 10 | [Teste de segurança](10-teste-seguranca.md) | segurança | 08, 09 | [ ] |

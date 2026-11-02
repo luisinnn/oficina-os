@@ -25,6 +25,6 @@ Um toque gera o link de aprovação e abre o WhatsApp com a mensagem pronta.
 
 ## Critérios de aceite
 
-- [ ] Abrir no celular abre o WhatsApp com a conversa do cliente e o texto pronto.
-- [ ] Reenviar gera link novo; o anterior para de funcionar (teste de banco).
-- [ ] Coluna `token_hash` nunca contém o token em texto (teste de banco compara).
+- [x] Abrir no celular abre o WhatsApp com a conversa do cliente e o texto pronto.
+- [x] Reenviar gera link novo; o anterior para de funcionar (teste de banco).
+- [x] Coluna `token_hash` nunca contém o token em texto (teste de banco compara).
