@@ -27,3 +27,19 @@ export async function salvarOficina(
   revalidatePath("/painel", "layout");
   return { mensagem: "Dados salvos.", valores: dados };
 }
+
+export type EstadoLink = { erro?: string; mensagem?: string };
+
+// "Gerar novo link": troca o código do pré-cadastro (trocar_codigo_publico).
+// O link antigo para de funcionar na hora. A página volta com o link novo.
+export async function gerarNovoLink(): Promise<EstadoLink> {
+  await getOficina();
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("trocar_codigo_publico");
+  if (error) {
+    console.error("gerarNovoLink:", error.code ?? error.message);
+    return { erro: "Não foi possível gerar o link. Tente de novo." };
+  }
+  revalidatePath("/painel/configuracoes");
+  return { mensagem: "Link novo gerado. O antigo não funciona mais." };
+}

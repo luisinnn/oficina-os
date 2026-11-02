@@ -178,3 +178,41 @@ export async function buscarItem(
   };
   return { item, estado: orcamentos.estado, numero: orcamentos.ordens.numero };
 }
+
+export type PreCadastro = {
+  id: string;
+  nome: string;
+  telefone: string;
+  placa: string;
+  modelo: string;
+  problema: string;
+  situacao: "pendente" | "confirmado" | "descartado";
+  ordem_id: string | null;
+  created_at: string;
+};
+
+const COLUNAS_PRE = "id, nome, telefone, placa, modelo, problema, situacao, ordem_id, created_at";
+
+// Pré-cadastros esperando a oficina, do mais antigo para o mais novo.
+export async function listarPreCadastrosPendentes(): Promise<PreCadastro[]> {
+  await getUsuario();
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("pre_cadastros")
+    .select(COLUNAS_PRE)
+    .eq("situacao", "pendente")
+    .order("created_at");
+  if (error) falhou("os pré-cadastros", error);
+  return data as PreCadastro[];
+}
+
+// Um pré-cadastro (qualquer situação). null = não existe ou é de outra oficina.
+export async function buscarPreCadastro(id: string): Promise<PreCadastro | null> {
+  if (!UUID.test(id)) return null;
+
+  await getUsuario();
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("pre_cadastros").select(COLUNAS_PRE).eq("id", id).maybeSingle();
+  if (error) falhou("o pré-cadastro", error);
+  return data as PreCadastro | null;
+}

@@ -4,7 +4,8 @@ import { redirect } from "next/navigation";
 import { getUsuario } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
-export type Oficina = { id: string; nome: string; telefone: string };
+// codigo_publico = código do link de pré-cadastro (/p/<codigo>).
+export type Oficina = { id: string; nome: string; telefone: string; codigo_publico: string };
 
 // Oficina do usuário logado, ou null se ele ainda não fez o onboarding.
 // (Quem não está logado vai para /login.) O RLS só devolve a oficina do
@@ -12,7 +13,7 @@ export type Oficina = { id: string; nome: string; telefone: string };
 export const buscarOficina = cache(async (): Promise<Oficina | null> => {
   await getUsuario();
   const supabase = await createClient();
-  const { data, error } = await supabase.from("oficinas").select("id, nome, telefone").maybeSingle();
+  const { data, error } = await supabase.from("oficinas").select("id, nome, telefone, codigo_publico").maybeSingle();
   if (error) throw new Error(`Erro ao ler a oficina: ${error.message}`);
   return data;
 });

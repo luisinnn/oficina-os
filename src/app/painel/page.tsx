@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
-import { listarOrdensAtivas, type OrdemAtiva } from "@/lib/ordens";
+import { formatarDataHora } from "@/lib/formatos";
+import { listarOrdensAtivas, listarPreCadastrosPendentes, type OrdemAtiva } from "@/lib/ordens";
 import { ROTULO_STATUS, STATUS_ABERTOS } from "@/lib/status-ordem";
 import { foiEnviado } from "@/lib/orcamento";
 import { EtiquetaOrcamento } from "./etiqueta-orcamento";
@@ -23,7 +24,9 @@ export default function PainelPage() {
         </Link>
       </section>
 
-      {/* Ticket 09: "Pré-cadastros para confirmar" entra aqui. */}
+      <Suspense fallback={<p className="text-sm text-zinc-400">Carregando...</p>}>
+        <PreCadastros />
+      </Suspense>
 
       {/* Ler as OS depende do usuário logado: a busca e o botão aparecem na hora. */}
       <Suspense fallback={<p className="text-sm text-zinc-400">Carregando...</p>}>
@@ -89,4 +92,37 @@ function Grupo({ titulo, ordens }: { titulo: string; ordens: OrdemAtiva[] }) {
 // Orçamento sem item ainda não é orçamento: não mostra etiqueta.
 function temOrcamento(os: OrdemAtiva) {
   return foiEnviado(os.orcamentos.estado) || os.orcamentos.orcamento_itens[0].count > 0;
+}
+
+// Pré-cadastros que chegaram pelo link público e esperam a oficina.
+async function PreCadastros() {
+  const pendentes = await listarPreCadastrosPendentes();
+  return (
+    <section>
+      <h2 className="mb-2 text-lg font-semibold text-zinc-900">
+        Pré-cadastros para confirmar <span className="font-normal text-zinc-500">({pendentes.length})</span>
+      </h2>
+      {pendentes.length === 0 ? (
+        <p className="text-sm text-zinc-500">Nenhum pré-cadastro esperando.</p>
+      ) : (
+        <ul className="grid gap-3 sm:grid-cols-2">
+          {pendentes.map((pre) => (
+            <li key={pre.id}>
+              <Link
+                href={`/painel/pre-cadastros/${pre.id}`}
+                className="block rounded-xl border border-amber-300 bg-amber-50 p-4 shadow-sm hover:border-amber-500"
+              >
+                <span className="flex items-baseline justify-between gap-2">
+                  <span className="font-mono text-lg font-semibold tracking-wide text-zinc-800">{pre.placa}</span>
+                  <span className="text-sm text-zinc-500">{formatarDataHora(pre.created_at)}</span>
+                </span>
+                <span className="mt-1 block truncate text-zinc-700">{pre.modelo}</span>
+                <span className="block truncate text-zinc-500">{pre.nome}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  );
 }
