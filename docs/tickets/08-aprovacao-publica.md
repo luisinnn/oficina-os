@@ -27,6 +27,6 @@ O cliente abre o link no celular, vê o orçamento e aprova ou recusa, sem login
 
 ## Critérios de aceite
 
-- [ ] Fluxo completo no celular: enviar (07) → abrir link → aprovar → etiqueta "aprovado" no painel.
-- [ ] Testes de banco: token errado, expirado, já respondido e anulado por edição → falham; anônimo continua sem acesso direto a `orcamentos`.
-- [ ] Duas chamadas de `responder_orcamento` ao mesmo tempo (`Promise.all`) → só uma dá certo, e só uma linha aparece em `orcamento_respostas`.
+- [x] Fluxo completo no celular: enviar (07) → abrir link → aprovar → etiqueta "aprovado" no painel.
+- [x] Testes de banco: token errado, expirado, já respondido e anulado por edição → falham; anônimo continua sem acesso direto a `orcamentos`.
+- [x] Duas chamadas de `responder_orcamento` ao mesmo tempo (`Promise.all`) → só uma dá certo, e só uma linha aparece em `orcamento_respostas`.
