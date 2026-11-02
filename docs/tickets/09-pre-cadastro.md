@@ -31,7 +31,7 @@ adianta; a oficina confere e transforma em OS.
 
 ## Critérios de aceite
 
-- [ ] Pré-cadastro chega ao painel e, confirmado, vira OS #n `aguardando`.
-- [ ] Confirmar placa existente sem trocar dono não altera `clientes`/`veiculos`.
-- [ ] 21º envio na mesma hora e 2º pendente da mesma placa → recusados (teste de banco).
-- [ ] Depois de "Gerar novo link", o código antigo responde erro.
+- [x] Pré-cadastro chega ao painel e, confirmado, vira OS #n `aguardando`.
+- [x] Confirmar placa existente sem trocar dono não altera `clientes`/`veiculos`.
+- [x] 21º envio na mesma hora e 2º pendente da mesma placa → recusados (teste de banco).
+- [x] Depois de "Gerar novo link", o código antigo responde erro.
