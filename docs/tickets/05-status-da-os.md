@@ -23,6 +23,6 @@ Mover a OS pelo fluxo com um toque, sem deixar estados impossíveis.
 
 ## Critérios de aceite
 
-- [ ] Toda transição válida funciona; inválidas (ex.: `aguardando → entregue`, `cancelada → aguardando`) falham no banco.
-- [ ] Testes unitários das transições + teste de banco da RPC.
-- [ ] Teste de banco: `update ordens set status = 'entregue'` direto, como usuário logado, dá erro de permissão.
+- [x] Toda transição válida funciona; inválidas (ex.: `aguardando → entregue`, `cancelada → aguardando`) falham no banco.
+- [x] Testes unitários das transições + teste de banco da RPC.
+- [x] Teste de banco: `update ordens set status = 'entregue'` direto, como usuário logado, dá erro de permissão.
