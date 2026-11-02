@@ -6,6 +6,7 @@ import { NextResponse, type NextRequest } from "next/server";
 // 1) Renovar o token de login do Supabase quando ele está perto de expirar,
 //    gravando o cookie novo na resposta.
 // 2) Barrar quem não está logado nas rotas privadas (/painel/... e /onboarding).
+// Não roda na página pública /aprovar/<token> (veja o matcher no fim).
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
 
@@ -68,8 +69,9 @@ function redirecionar(request: NextRequest, path: string, from: NextResponse) {
 
 export const config = {
   // Roda em tudo, menos arquivos estáticos (JS/CSS/imagens), que não precisam
-  // de sessão.
+  // de sessão, e a página pública de aprovação (/aprovar/<token>), que não
+  // usa login: o cliente abre sem conta.
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|aprovar/|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };
