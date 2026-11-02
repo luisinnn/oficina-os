@@ -25,7 +25,7 @@ O fluxo do dia a dia: chegou um carro, registrar em **menos de 1 minuto** no cel
 
 ## Critérios de aceite
 
-- [ ] Do toque em "+ Nova OS" até salvar, com placa nova: 5 campos, 1 botão. Cronometrar no celular: < 1 minuto.
-- [ ] Erros de validação aparecem no campo certo e não apagam o que foi digitado.
-- [ ] Testado em largura 360px (Chrome DevTools) sem rolagem horizontal.
-- [ ] Testes unitários da validação do formulário; teste de banco da RPC `criar_ordem` (placa nova, existente, troca de dono, OS aberta bloqueia).
+- [x] Do toque em "+ Nova OS" até salvar, com placa nova: 5 campos, 1 botão. Cronometrar no celular: < 1 minuto.
+- [x] Erros de validação aparecem no campo certo e não apagam o que foi digitado.
+- [x] Testado em largura 360px (Chrome DevTools) sem rolagem horizontal.
+- [x] Testes unitários da validação do formulário; teste de banco da RPC `criar_ordem` (placa nova, existente, troca de dono, OS aberta bloqueia).
