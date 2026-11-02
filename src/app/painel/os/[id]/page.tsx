@@ -3,13 +3,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { formatarDataHora, formatarTelefone } from "@/lib/formatos";
-import { buscarOrdem } from "@/lib/ordens";
+import { buscarOrcamento, buscarOrdem } from "@/lib/ordens";
 import { ROTULO_STATUS } from "@/lib/status-ordem";
 import { AcoesStatus } from "./acoes-status";
+import { SecaoOrcamento } from "./secao-orcamento";
 
 export const metadata: Metadata = { title: "OS | oficina-os" };
 
-// Detalhe da OS com os botões de status. (Orçamento entra no ticket 06.)
+// Detalhe da OS: botões de status, dados da visita e orçamento.
 export default function OrdemPage({ params }: PageProps<"/painel/os/[id]">) {
   return (
     <Suspense fallback={<p className="text-sm text-zinc-400">Carregando...</p>}>
@@ -20,8 +21,8 @@ export default function OrdemPage({ params }: PageProps<"/painel/os/[id]">) {
 
 async function DetalheOs({ params }: Pick<PageProps<"/painel/os/[id]">, "params">) {
   const { id } = await params;
-  const os = await buscarOrdem(id);
-  if (!os) notFound();
+  const [os, orcamento] = await Promise.all([buscarOrdem(id), buscarOrcamento(id)]);
+  if (!os || !orcamento) notFound();
 
   return (
     <section className="mx-auto max-w-md space-y-4">
@@ -56,6 +57,8 @@ async function DetalheOs({ params }: Pick<PageProps<"/painel/os/[id]">, "params"
         <Item rotulo="Entrada">{formatarDataHora(os.created_at)}</Item>
         {os.entregue_em && <Item rotulo="Entregue">{formatarDataHora(os.entregue_em)}</Item>}
       </dl>
+
+      <SecaoOrcamento ordemId={os.id} orcamento={orcamento} />
 
       <Link href="/painel" className="flex min-h-12 items-center font-medium text-blue-600 hover:underline">
         ← Voltar para o início

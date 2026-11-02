@@ -3,6 +3,8 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { listarOrdensAtivas, type OrdemAtiva } from "@/lib/ordens";
 import { ROTULO_STATUS, STATUS_ABERTOS } from "@/lib/status-ordem";
+import { foiEnviado } from "@/lib/orcamento";
+import { EtiquetaOrcamento } from "./etiqueta-orcamento";
 import { FormBuscaPlaca } from "./form-busca-placa";
 
 export const metadata: Metadata = { title: "Painel | oficina-os" };
@@ -70,6 +72,11 @@ function Grupo({ titulo, ordens }: { titulo: string; ordens: OrdemAtiva[] }) {
                 </span>
                 <span className="mt-1 block truncate text-zinc-700">{os.veiculos.modelo}</span>
                 <span className="block truncate text-zinc-500">{os.clientes.nome}</span>
+                {temOrcamento(os) && (
+                  <span className="mt-2 block">
+                    <EtiquetaOrcamento estado={os.orcamentos.estado} prefixo="Orçamento: " />
+                  </span>
+                )}
               </Link>
             </li>
           ))}
@@ -77,4 +84,9 @@ function Grupo({ titulo, ordens }: { titulo: string; ordens: OrdemAtiva[] }) {
       )}
     </section>
   );
+}
+
+// Orçamento sem item ainda não é orçamento: não mostra etiqueta.
+function temOrcamento(os: OrdemAtiva) {
+  return foiEnviado(os.orcamentos.estado) || os.orcamentos.orcamento_itens[0].count > 0;
 }

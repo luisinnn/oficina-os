@@ -13,6 +13,7 @@ Um toque gera o link de aprovação e abre o WhatsApp com a mensagem pronta.
   - gera token com `extensions.gen_random_bytes(32)` em base64url (~43 caracteres);
   - grava só `token_hash = extensions.digest(token, 'sha256')`, `token_expira_em = now() + 30 days`, `estado = 'enviado'`, `enviado_em = now()`;
   - devolve o token **uma única vez** (não dá para recuperar depois; reenviar gera outro e anula o anterior).
+  - reenviar orçamento já respondido: zerar também `respondido_em` e `motivo_recusa` (os CHECKs de `orcamentos`, ticket 06, exigem isso para o estado `enviado`). O histórico em `orcamento_respostas` fica.
 
 ## App
 

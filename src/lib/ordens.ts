@@ -1,6 +1,7 @@
 import "server-only";
 import { getUsuario } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
+import type { DadosItem, EstadoOrcamento } from "@/lib/orcamento";
 import { STATUS_ABERTOS, estaAberta, type StatusOrdem } from "@/lib/status-ordem";
 
 // Leituras de OS, veículos e clientes para as telas do painel. O RLS só
@@ -19,6 +20,7 @@ export type OrdemResumo = {
 export type OrdemAtiva = Pick<OrdemResumo, "id" | "numero" | "status"> & {
   veiculos: { placa: string; modelo: string };
   clientes: { nome: string };
+  orcamentos: { estado: EstadoOrcamento; orcamento_itens: [{ count: number }] };
 };
 
 export type Carro = {
@@ -51,7 +53,7 @@ export async function listarOrdensAtivas(): Promise<OrdemAtiva[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("ordens")
-    .select("id, numero, status, veiculos(placa, modelo), clientes(nome)")
+    .select("id, numero, status, veiculos(placa, modelo), clientes(nome), orcamentos(estado, orcamento_itens(count))")
     .in("status", STATUS_ABERTOS)
     .order("numero");
   if (error) falhou("as OS", error);
@@ -106,4 +108,73 @@ export async function buscarOrdem(id: string): Promise<Ordem | null> {
     .maybeSingle();
   if (error) falhou("a OS", error);
   return data as unknown as Ordem | null;
+}
+
+export type ItemOrcamento = DadosItem & { id: string };
+
+export type RespostaCliente = {
+  id: string;
+  resposta: "aprovado" | "recusado";
+  total_centavos: number;
+  motivo: string | null;
+  respondido_em: string;
+};
+
+export type Orcamento = {
+  id: string;
+  estado: EstadoOrcamento;
+  total_centavos: number;
+  // Na ordem em que foram adicionados.
+  itens: ItemOrcamento[];
+  // Mais recente primeiro.
+  respostas: RespostaCliente[];
+};
+
+const COLUNAS_ITEM = "id, tipo, descricao, quantidade, valor_unitario_centavos";
+
+// Orçamento de uma OS (toda OS tem um), com itens e histórico de respostas.
+// null = OS não existe (ou é de outra oficina).
+export async function buscarOrcamento(ordemId: string): Promise<Orcamento | null> {
+  if (!UUID.test(ordemId)) return null;
+
+  await getUsuario();
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("orcamentos")
+    .select(
+      `id, estado, total_centavos,
+       itens:orcamento_itens(${COLUNAS_ITEM}),
+       respostas:orcamento_respostas(id, resposta, total_centavos, motivo, respondido_em)`,
+    )
+    .eq("ordem_id", ordemId)
+    .order("created_at", { referencedTable: "itens" })
+    .order("respondido_em", { referencedTable: "respostas", ascending: false })
+    .maybeSingle();
+  if (error) falhou("o orçamento", error);
+  return data as unknown as Orcamento | null;
+}
+
+// Um item para a tela de editar, com o número da OS e o estado do orçamento
+// (para o aviso de link enviado). null = não existe ou não é desta OS.
+export async function buscarItem(
+  ordemId: string,
+  itemId: string,
+): Promise<{ item: ItemOrcamento; estado: EstadoOrcamento; numero: number } | null> {
+  if (!UUID.test(ordemId) || !UUID.test(itemId)) return null;
+
+  await getUsuario();
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("orcamento_itens")
+    .select(`${COLUNAS_ITEM}, orcamentos!inner(estado, ordem_id, ordens(numero))`)
+    .eq("id", itemId)
+    .eq("orcamentos.ordem_id", ordemId)
+    .maybeSingle();
+  if (error) falhou("o item", error);
+  if (!data) return null;
+
+  const { orcamentos, ...item } = data as unknown as ItemOrcamento & {
+    orcamentos: { estado: EstadoOrcamento; ordens: { numero: number } };
+  };
+  return { item, estado: orcamentos.estado, numero: orcamentos.ordens.numero };
 }

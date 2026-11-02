@@ -12,6 +12,7 @@ O cliente abre o link no celular, vê o orçamento e aprova ou recusa, sem login
 - `responder_orcamento(token, aprovar, motivo)` → só aceita se estado = `enviado` e não expirado. Grava `aprovado`/`recusado`, `respondido_em`, `motivo_recusa` (até 500, só na recusa). Segunda resposta falha.
   - **Uma operação só**, para o duplo clique não responder duas vezes: `update public.orcamentos set ... where token_hash = ... and estado = 'enviado' and token_expira_em > now() returning ...`. Se não voltar linha, responde "não encontrado". Nada de "ler, conferir e depois gravar".
   - Na mesma transação, grava em `orcamento_respostas` (ticket 06) o total e a cópia dos itens daquele momento.
+  - Motivo vazio vira null (`nullif(btrim(motivo), '')`): os CHECKs não aceitam texto vazio. Na aprovação, motivo sempre null.
 - Token inválido, expirado ou anulado → a mesma resposta genérica "não encontrado", sem dizer qual dos casos.
 - `security definer` + `set search_path = ''`; `grant execute ... to anon` só nessas duas.
 
