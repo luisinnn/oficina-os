@@ -29,8 +29,8 @@ Montar o orçamento dentro da OS, com total sempre calculado.
 
 ## Critérios de aceite
 
-- [ ] Funções `reaisParaCentavos` / `formatarReais` com testes (vírgula, ponto de milhar, `0,99`, valores inválidos).
-- [ ] Total confere em teste de banco com vários itens.
-- [ ] Editar item de orçamento `aprovado` → volta a `rascunho` e `token_hash` vira null, e a linha em `orcamento_respostas` continua lá com o valor aprovado.
-- [ ] Usuário logado não consegue `update`/`delete` em `orcamento_respostas` nem `update` direto em `orcamentos.estado`.
-- [ ] Valor negativo ou quantidade 0 recusados no app e no banco.
+- [x] Funções `reaisParaCentavos` / `formatarReais` com testes (vírgula, ponto de milhar, `0,99`, valores inválidos).
+- [x] Total confere em teste de banco com vários itens.
+- [x] Editar item de orçamento `aprovado` → volta a `rascunho` e `token_hash` vira null, e a linha em `orcamento_respostas` continua lá com o valor aprovado.
+- [x] Usuário logado não consegue `update`/`delete` em `orcamento_respostas` nem `update` direto em `orcamentos.estado`.
+- [x] Valor negativo ou quantidade 0 recusados no app e no banco.

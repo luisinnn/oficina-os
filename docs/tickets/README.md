@@ -20,7 +20,7 @@ Primeiro cliente real: oficina do primo. Feito em cima do template
 | 03 | [Clientes, veículos e OS (banco)](03-clientes-veiculos-ordens.md) | banco, segurança | 02 | [x] |
 | 04 | [Tela inicial, busca por placa e nova OS](04-tela-inicial-busca-nova-os.md) | tela | 03 | [x] |
 | 05 | [Status da OS](05-status-da-os.md) | tela, banco | 04 | [x] |
-| 06 | [Orçamento: itens e total](06-orcamento.md) | banco, tela | 05 | [ ] |
+| 06 | [Orçamento: itens e total](06-orcamento.md) | banco, tela | 05 | [x] |
 | 07 | [Enviar orçamento pelo WhatsApp](07-envio-whatsapp.md) | banco, tela, segurança | 06 | [ ] |
 | 08 | [Página pública de aprovação](08-aprovacao-publica.md) | banco, tela, segurança | 07 | [ ] |
 | 09 | [Pré-cadastro público e confirmação](09-pre-cadastro.md) | banco, tela, segurança | 04 | [ ] |
