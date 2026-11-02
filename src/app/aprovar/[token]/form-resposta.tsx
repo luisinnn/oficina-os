@@ -2,7 +2,7 @@
 // Botões Aprovar e Recusar da página pública. Recusar abre o campo de motivo
 // (opcional) e pede para confirmar. Depois de responder, some o formulário.
 
-import { useActionState, useState } from "react";
+import { Fragment, useActionState, useState } from "react";
 import { MOTIVO_MAX, type Resposta } from "@/lib/aprovacao";
 import { responderOrcamento } from "./actions";
 
@@ -24,8 +24,11 @@ export function FormResposta({ token }: { token: string }) {
         </p>
       )}
 
+      {/* As keys diferentes forçam botões novos ao trocar de tela. Sem elas o React
+          reaproveita o botão "Recusar" virando "Confirmar recusa" (type submit)
+          durante o próprio clique, e o form era enviado sem pedir o motivo. */}
       {recusando ? (
-        <>
+        <Fragment key="recusando">
           <label className="block">
             <span className="text-sm font-medium text-zinc-700">Motivo da recusa (opcional)</span>
             <textarea
@@ -54,9 +57,9 @@ export function FormResposta({ token }: { token: string }) {
           >
             Voltar
           </button>
-        </>
+        </Fragment>
       ) : (
-        <>
+        <Fragment key="inicio">
           <button
             type="submit"
             name="acao"
@@ -74,7 +77,7 @@ export function FormResposta({ token }: { token: string }) {
           >
             Recusar
           </button>
-        </>
+        </Fragment>
       )}
     </form>
   );
