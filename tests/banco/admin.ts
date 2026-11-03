@@ -6,14 +6,16 @@ import { execFileSync } from "node:child_process";
 // com o Supabase local: nunca use para testar se a API deixa ou não fazer
 // algo. Exceção: ler o catálogo do Postgres (tests/seguranca/catalogo.test.ts).
 // Container = "supabase_db_" + project_id de supabase/config.toml.
-const CONTAINER = "supabase_db_oficina-os";
+export const CONTAINER = "supabase_db_oficina-os";
 
-export function sqlAdmin(sql: string): string {
+// conexao: outro banco/usuário (URL vista de dentro do container). Padrão:
+// banco postgres como usuário postgres.
+export function sqlAdmin(sql: string, conexao?: string): string {
   // O SQL vai pela entrada padrão: no Windows, argumento com quebra de linha
   // chega cortado no docker.
   return execFileSync(
     "docker",
-    ["exec", "-i", CONTAINER, "psql", "-U", "postgres", "-tA", "-q", "-v", "ON_ERROR_STOP=1"],
+    ["exec", "-i", CONTAINER, "psql", ...(conexao ? [conexao] : ["-U", "postgres"]), "-tA", "-q", "-v", "ON_ERROR_STOP=1"],
     { encoding: "utf8", input: sql, stdio: ["pipe", "pipe", "pipe"] },
   ).trim();
 }

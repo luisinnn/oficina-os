@@ -1,0 +1,3 @@
+# Scripts bash sempre com fim de linha LF: com CRLF (padrão do Git no
+# Windows) o bash quebra com "command not found".
+*.sh text eol=lf

@@ -22,6 +22,13 @@ backup que dê para baixar.
 
 ## Critérios de aceite
 
+Os três só fecham no ticket 12, quando os segredos existirem e der para rodar
+no Actions. O que já está coberto antes disso: `tests/backup/backup.test.ts`
+(no `npm run test:db` e no CI) gera o backup do Supabase local com os mesmos
+scripts do workflow, confere que nada aparece legível e restaura num banco
+vazio. O passo a passo do README (gerar → `db:reset` → `restaurar.sh`) também
+foi feito à mão no Supabase local, e as contagens e os números das OS bateram.
+
 - [ ] Rodada manual gera artefato `.sql.gpg`; abrir sem a senha não mostra nada legível.
 - [ ] Restauração testada no Supabase local a partir do artefato.
 - [ ] Nenhum segredo aparece no log do Actions.

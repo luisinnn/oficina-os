@@ -1,0 +1,134 @@
+# Backup semanal do banco de produção (ticket 11).
+# pg_dump dos dados -> criptografa com gpg -> artefato guardado por 30 dias.
+# Como restaurar: README, seção "Backup".
+#
+# O repositório é PÚBLICO: qualquer pessoa logada no GitHub baixa os artefatos.
+# Por isso o arquivo sai criptografado; sem a BACKUP_PASSPHRASE ele não abre.
+name: Backup
+
+on:
+  schedule:
+    - cron: "0 6 * * 1" # segunda-feira, 06:00 UTC (03:00 em Brasília)
+  workflow_dispatch: # botão "Run workflow" na aba Actions
+
+# Nunca dois backups ao mesmo tempo.
+concurrency:
+  group: backup
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  # Os segredos só são criados no deploy (ticket 12). Até lá, o backup fica
+  # pulado em vez de falhar toda semana.
+  segredos:
+    name: Segredos configurados?
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    outputs:
+      ok: ${{ steps.conferir.outputs.ok }}
+    steps:
+      - id: conferir
+        env:
+          TEM_SEGREDOS: ${{ secrets.SUPABASE_DB_URL != '' && secrets.BACKUP_PASSPHRASE != '' }}
+        run: |
+          echo "ok=$TEM_SEGREDOS" >> "$GITHUB_OUTPUT"
+          if [ "$TEM_SEGREDOS" != "true" ]; then
+            echo "::notice::Faltam os segredos SUPABASE_DB_URL e/ou BACKUP_PASSPHRASE (ticket 12). Backup pulado."
+          fi
+
+  backup:
+    name: Gerar backup criptografado
+    needs: segredos
+    if: needs.segredos.outputs.ok == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      actions: read # para listar os backups anteriores (conferência dos 8 dias)
+    env:
+      # Versão principal do Postgres do Supabase de produção. O pg_dump tem que
+      # ser dessa versão ou mais novo. Conferir em Settings > Infrastructure.
+      PG_VERSAO: "17"
+
+    steps:
+      - name: Baixar o código
+        uses: actions/checkout@v7
+
+      # O GitHub desliga workflows agendados depois de 60 dias sem atividade no
+      # repo, e semanas de backup podem faltar sem ninguém ver. Aqui se olha
+      # quando este job terminou com sucesso pela última vez. Usa o histórico
+      # de execuções, não os artefatos: eles expiram em 30 dias e, depois de
+      # um buraco longo, não sobraria nenhum para comparar.
+      - name: Ver a data do último backup
+        id: ultimo
+        env:
+          GH_TOKEN: ${{ github.token }}
+          JOB: Gerar backup criptografado # o "name" deste job
+        run: |
+          ultimo=""
+          # Execuções "success" incluem as que só pularam o backup (sem
+          # segredos): por isso se olha o job de cada uma.
+          for run in $(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/backup.yml/runs?status=success&per_page=30" \
+            --jq '.workflow_runs[].id'); do
+            [ "$run" = "$GITHUB_RUN_ID" ] && continue
+            ultimo=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$run/jobs" \
+              --jq ".jobs[] | select(.name == \"$JOB\" and .conclusion == \"success\") | .completed_at")
+            [ -n "$ultimo" ] && break
+          done
+          if [ -z "$ultimo" ]; then
+            echo "Nenhum backup anterior encontrado (primeira execução?)."
+            echo "atrasado=false" >> "$GITHUB_OUTPUT"
+          else
+            segundos=$(( $(date +%s) - $(date -d "$ultimo" +%s) ))
+            echo "Último backup: $ultimo ($(( segundos / 86400 )) dias atrás)."
+            echo "atrasado=$([ "$segundos" -gt $(( 8 * 86400 )) ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+            echo "ultimo=$ultimo" >> "$GITHUB_OUTPUT"
+          fi
+
+      # O pg_dump que vem no runner pode ser mais velho que o Postgres do
+      # Supabase. Instala o da versão certa, do repositório oficial do Postgres.
+      - name: Instalar o pg_dump ${{ env.PG_VERSAO }}
+        run: |
+          sudo install -d /usr/share/postgresql-common/pgdg
+          sudo curl -fsSL -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc \
+            https://www.postgresql.org/media/keys/ACCC4CF8.asc
+          echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" |
+            sudo tee /etc/apt/sources.list.d/pgdg.list > /dev/null
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq "postgresql-client-$PG_VERSAO"
+          "/usr/lib/postgresql/$PG_VERSAO/bin/pg_dump" --version
+
+      - name: Gerar o backup (pg_dump -> gpg)
+        id: gerar
+        env:
+          # Pooler em MODO SESSÃO (porta 5432). O modo transação (6543) não
+          # funciona com o pg_dump.
+          DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          BACKUP_PASSPHRASE: ${{ secrets.BACKUP_PASSPHRASE }}
+        run: |
+          nome="backup-$(date -u +%Y-%m-%d)"
+          PG_DUMP="/usr/lib/postgresql/$PG_VERSAO/bin/pg_dump" \
+            scripts/backup/gerar.sh "$RUNNER_TEMP/$nome.sql.gpg"
+          echo "nome=$nome" >> "$GITHUB_OUTPUT"
+
+      - name: Guardar como artefato (30 dias)
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ steps.gerar.outputs.nome }}
+          path: ${{ runner.temp }}/${{ steps.gerar.outputs.nome }}.sql.gpg
+          retention-days: 30
+          if-no-files-found: error
+          # Já vem comprimido pelo gpg.
+          compression-level: 0
+
+      # Falha DEPOIS de guardar o backup novo: o GitHub manda e-mail avisando
+      # que houve um buraco de mais de 8 dias sem backup.
+      - name: Avisar se ficou mais de 8 dias sem backup
+        if: steps.ultimo.outputs.atrasado == 'true'
+        env:
+          ULTIMO: ${{ steps.ultimo.outputs.ultimo }}
+        run: |
+          echo "::error::O backup anterior era de $ULTIMO, mais de 8 dias atrás. Ver se o workflow ficou desativado ou falhando."
+          exit 1

@@ -88,6 +88,33 @@ A configuração do Supabase local (auth, portas, senha mínima, confirmação d
 - **verificar:** lint → tipos → testes → build.
 - **banco:** sobe o Supabase local no runner do GitHub, aplica as migrações e roda `npm run test:db`.
 
+## Backup
+
+[`.github/workflows/backup.yml`](.github/workflows/backup.yml) roda toda segunda-feira (e pelo botão **Run workflow** na aba Actions). Ele faz o `pg_dump` dos dados de produção, criptografa com `gpg` e guarda como artefato por 30 dias. O repositório é público e qualquer pessoa logada baixa os artefatos: **sem a senha o arquivo não abre**.
+
+- Segredos do GitHub (criados no ticket 12): `SUPABASE_DB_URL` (string do pooler em **modo sessão**, porta 5432) e `BACKUP_PASSPHRASE`. Sem eles o backup fica pulado. **Guarde a senha também fora do GitHub** (gerenciador de senhas): o GitHub não mostra o segredo de volta, e sem ela nenhum backup abre.
+- O backup leva só os **dados** (tabelas do `public` + usuários do `auth`). A estrutura vem das migrações.
+- **Lembrete mensal:** abrir a aba Actions → Backup e ver se o último backup tem menos de uma semana. O GitHub desliga workflows agendados depois de 60 dias sem atividade no repo. Se aparecer "This scheduled workflow is disabled", clicar em **Enable workflow** e rodar uma vez na mão. (Quando roda, o próprio workflow falha, e o GitHub manda e-mail, se o backup anterior tiver mais de 8 dias.)
+
+### Como restaurar (no Supabase local)
+
+1. Na aba Actions, abra a última execução do **Backup** e baixe o artefato `backup-AAAA-MM-DD` (vem um `.zip`). Descompacte: dentro está o `backup-AAAA-MM-DD.sql.gpg`.
+2. Banco local vazio, só com a estrutura: `npm run db:start` e `npm run db:reset` (**apaga** os dados locais).
+3. No **Git Bash**, na pasta do projeto (a senha é pedida sem aparecer na tela nem ficar no histórico):
+
+   ```bash
+   read -rsp "Senha do backup: " BACKUP_PASSPHRASE; echo; export BACKUP_PASSPHRASE
+   MSYS_NO_PATHCONV=1 \
+   DB_URL=postgresql://supabase_admin:postgres@127.0.0.1:5432/postgres \
+   PSQL="docker exec -i supabase_db_oficina-os psql" \
+     scripts/backup/restaurar.sh ~/Downloads/backup-AAAA-MM-DD.sql.gpg
+   ```
+
+   Se der erro (senha errada, arquivo corrompido, banco com dados), nada é gravado. Os usuários voltam com a mesma senha de login.
+4. `npm run dev` e entre com um usuário da oficina para conferir.
+
+Só para olhar o conteúdo: `gpg --decrypt backup-AAAA-MM-DD.sql.gpg > backup.sql`. Esse arquivo fica **sem criptografia**: apague depois e nunca coloque no repo.
+
 ## Estrutura do projeto
 
 ```
@@ -95,6 +122,7 @@ docs/tickets/                 Planejamento da v1 (um arquivo por ticket)
 supabase/config.toml          Configuração do Supabase local
 supabase/migrations/          Migrações SQL do banco (versionadas)
 tests/                        Testes de integração com o banco (npm run test:db)
+scripts/backup/               Gerar (pg_dump -> gpg) e restaurar (gpg -> psql) o backup
 vitest.config.mts             Testes rápidos (npm test)
 vitest.db.config.mts          Testes de banco: lê URL e chave do "supabase status"
 src/proxy.ts                  Roda antes de cada página: renova a sessão e barra quem não está logado
