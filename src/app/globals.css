@@ -8,11 +8,39 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-barlow);
+  --font-condensada: var(--font-barlow-condensada);
+}
+
+/* Cores do painel (ticket 13). Contraste AA conferido em
+   src/lib/contraste.test.ts (lê as cores daqui). */
+@theme {
+  --color-concreto: #e4e6e3;
+  --color-chapa: #ffffff;
+  --color-grafite: #1f2328;
+  --color-placa: #003399;
+  --color-placa-escuro: #00287a;
+  --color-sinal: #f2b705;
+  --color-liberado: #1e7b4a;
+
+  /* Escala de tamanhos: 14 / 16 / 20 (text-sm, base, xl) + estes dois. */
+  --text-titulo: 1.75rem;
+  --text-destaque: 2.5rem;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
+}
+
+/* Foco do teclado bem visível no painel. Fora de camada: vence o
+   "focus:outline-none" dos campos. */
+.painel :focus-visible {
+  outline: 3px solid var(--color-placa);
+  outline-offset: 2px;
+}
+
+/* No cabeçalho grafite o azul some: lá o foco é branco. */
+.painel header :focus-visible {
+  outline-color: var(--color-chapa);
 }

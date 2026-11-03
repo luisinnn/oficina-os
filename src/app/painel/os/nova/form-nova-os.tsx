@@ -15,9 +15,9 @@ import {
 import { criarOrdem } from "./actions";
 
 const classeCampo =
-  "mt-1 min-h-12 w-full rounded-md border border-zinc-300 px-3 py-2 text-base text-zinc-900 focus:border-blue-500 focus:outline-none aria-invalid:border-red-500";
+  "mt-1 min-h-12 w-full rounded-md border border-zinc-300 px-3 py-2 text-base text-zinc-900 focus:border-placa focus:outline-none aria-invalid:border-red-500";
 const classeBotao =
-  "min-h-12 w-full rounded-md bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700 disabled:opacity-50";
+  "min-h-12 w-full rounded-md bg-placa px-4 py-2 font-medium text-white hover:bg-placa-escuro disabled:opacity-50";
 
 export function FormNovaOs({ inicial }: { inicial: ValoresOrdem }) {
   const [estado, enviar, pendente] = useActionState(criarOrdem, {});

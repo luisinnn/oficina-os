@@ -15,7 +15,7 @@ export default function ConfiguracoesPage() {
     <div className="mx-auto max-w-sm space-y-6">
       <section className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
         <h1 className="mb-6 text-2xl font-semibold text-zinc-900">Configurações</h1>
-        <Suspense fallback={<p className="text-sm text-zinc-400">...</p>}>
+        <Suspense fallback={<p className="text-sm text-zinc-600">...</p>}>
           <FormDadosOficina />
         </Suspense>
       </section>
@@ -25,7 +25,7 @@ export default function ConfiguracoesPage() {
           Coloque no WhatsApp Business e no Google. O cliente preenche os dados e o carro aparece no painel para
           você confirmar.
         </p>
-        <Suspense fallback={<p className="text-sm text-zinc-400">...</p>}>
+        <Suspense fallback={<p className="text-sm text-zinc-600">...</p>}>
           <SecaoLink />
         </Suspense>
       </section>

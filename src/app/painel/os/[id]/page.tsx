@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { formatarDataHora, formatarTelefone } from "@/lib/formatos";
+import { Placa } from "@/components/placa";
 import { buscarOrcamento, buscarOrdem } from "@/lib/ordens";
 import { ROTULO_STATUS } from "@/lib/status-ordem";
 import { AcoesStatus } from "./acoes-status";
@@ -13,7 +14,7 @@ export const metadata: Metadata = { title: "OS | oficina-os" };
 // Detalhe da OS: botões de status, dados da visita e orçamento.
 export default function OrdemPage({ params }: PageProps<"/painel/os/[id]">) {
   return (
-    <Suspense fallback={<p className="text-sm text-zinc-400">Carregando...</p>}>
+    <Suspense fallback={<p className="text-sm text-zinc-600">Carregando...</p>}>
       <DetalheOs params={params} />
     </Suspense>
   );
@@ -37,8 +38,8 @@ async function DetalheOs({ params }: Pick<PageProps<"/painel/os/[id]">, "params"
 
       <dl className="space-y-3 rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
         <Item rotulo="Carro">
-          <Link href={`/painel/placa/${os.veiculos.placa}`} className="font-semibold text-blue-700 underline">
-            {os.veiculos.placa}
+          <Link href={`/painel/placa/${os.veiculos.placa}`} className="inline-flex min-h-12 items-center rounded hover:opacity-80" aria-label={`Ver o histórico da placa ${os.veiculos.placa}`}>
+            <Placa placa={os.veiculos.placa} tamanho="p" />
           </Link>{" "}
           · {os.veiculos.modelo}
         </Item>
@@ -60,7 +61,7 @@ async function DetalheOs({ params }: Pick<PageProps<"/painel/os/[id]">, "params"
 
       <SecaoOrcamento ordemId={os.id} orcamento={orcamento} />
 
-      <Link href="/painel" className="flex min-h-12 items-center font-medium text-blue-600 hover:underline">
+      <Link href="/painel" className="flex min-h-12 items-center font-medium text-placa hover:underline">
         ← Voltar para o início
       </Link>
     </section>
@@ -70,7 +71,7 @@ async function DetalheOs({ params }: Pick<PageProps<"/painel/os/[id]">, "params"
 function Item({ rotulo, children }: { rotulo: string; children: React.ReactNode }) {
   return (
     <div>
-      <dt className="text-sm text-zinc-500">{rotulo}</dt>
+      <dt className="text-sm text-zinc-600">{rotulo}</dt>
       <dd className="break-words text-zinc-900">{children}</dd>
     </div>
   );

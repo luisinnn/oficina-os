@@ -7,9 +7,9 @@ import { type CampoItem, DESCRICAO_MAX, ROTULO_TIPO, type TipoItem, type Valores
 import { removerItem, salvarItem } from "./actions";
 
 const classeCampo =
-  "mt-1 min-h-12 w-full rounded-md border border-zinc-300 px-3 py-2 text-base text-zinc-900 focus:border-blue-500 focus:outline-none aria-invalid:border-red-500";
+  "mt-1 min-h-12 w-full rounded-md border border-zinc-300 px-3 py-2 text-base text-zinc-900 focus:border-placa focus:outline-none aria-invalid:border-red-500";
 const classeBotao =
-  "min-h-12 w-full rounded-md bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700 disabled:opacity-50";
+  "min-h-12 w-full rounded-md bg-placa px-4 py-2 font-medium text-white hover:bg-placa-escuro disabled:opacity-50";
 
 const AVISO_LINK = "Este orçamento já foi enviado. Isso invalida o link enviado ao cliente, e vai ser preciso enviar de novo.";
 
@@ -45,7 +45,7 @@ export function FormItem({
           {(Object.keys(ROTULO_TIPO) as TipoItem[]).map((tipo) => (
             <label
               key={tipo}
-              className="flex min-h-12 cursor-pointer items-center justify-center rounded-md border border-zinc-300 px-3 font-medium text-zinc-700 has-checked:border-blue-600 has-checked:bg-blue-50 has-checked:text-blue-800"
+              className="flex min-h-12 cursor-pointer items-center justify-center rounded-md border border-zinc-300 px-3 font-medium text-zinc-700 has-checked:border-placa has-checked:bg-placa/10 has-checked:text-placa"
             >
               <input
                 type="radio"

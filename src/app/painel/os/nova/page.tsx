@@ -10,7 +10,7 @@ export default function NovaOsPage({ searchParams }: PageProps<"/painel/os/nova"
   return (
     <section className="mx-auto max-w-md rounded-xl border border-zinc-200 bg-white p-4 shadow-sm sm:p-6">
       <h1 className="mb-6 text-2xl font-semibold text-zinc-900">Nova OS</h1>
-      <Suspense fallback={<p className="text-sm text-zinc-400">Carregando...</p>}>
+      <Suspense fallback={<p className="text-sm text-zinc-600">Carregando...</p>}>
         <FormPreenchido searchParams={searchParams} />
       </Suspense>
     </section>

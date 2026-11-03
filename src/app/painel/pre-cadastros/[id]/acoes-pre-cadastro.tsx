@@ -6,7 +6,7 @@ import { useActionState } from "react";
 import { responderPreCadastro } from "./actions";
 
 const classeBotao = "min-h-14 w-full rounded-md px-4 text-lg font-semibold disabled:opacity-50";
-const principal = `${classeBotao} bg-blue-600 text-white hover:bg-blue-700`;
+const principal = `${classeBotao} bg-placa text-white hover:bg-placa-escuro`;
 const secundario = `${classeBotao} border border-zinc-300 bg-white text-zinc-700 hover:bg-zinc-50`;
 
 type Props = {

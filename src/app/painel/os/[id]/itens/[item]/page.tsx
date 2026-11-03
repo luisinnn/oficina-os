@@ -12,7 +12,7 @@ export const metadata: Metadata = { title: "Editar item | oficina-os" };
 export default function EditarItemPage({ params }: PageProps<"/painel/os/[id]/itens/[item]">) {
   return (
     <section className="mx-auto max-w-md space-y-4">
-      <Suspense fallback={<p className="text-sm text-zinc-400">Carregando...</p>}>
+      <Suspense fallback={<p className="text-sm text-zinc-600">Carregando...</p>}>
         <EditarItem params={params} />
       </Suspense>
     </section>
@@ -42,7 +42,7 @@ async function EditarItem({ params }: Pick<PageProps<"/painel/os/[id]/itens/[ite
         />
         <RemoverItem itemId={item.id} enviado={enviado} />
       </div>
-      <Link href={`/painel/os/${id}`} className="flex min-h-12 items-center font-medium text-blue-600 hover:underline">
+      <Link href={`/painel/os/${id}`} className="flex min-h-12 items-center font-medium text-placa hover:underline">
         ← Voltar para a OS
       </Link>
     </>

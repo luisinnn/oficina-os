@@ -12,7 +12,7 @@ type Props = {
 };
 
 const classeCampo =
-  "mt-1 min-h-12 w-full rounded-md border border-zinc-300 px-3 py-2 text-zinc-900 focus:border-blue-500 focus:outline-none";
+  "mt-1 min-h-12 w-full rounded-md border border-zinc-300 px-3 py-2 text-zinc-900 focus:border-placa focus:outline-none";
 
 export function FormOficina({ acao, inicial, botao }: Props) {
   const [estado, enviar, pendente] = useActionState(acao, {});
@@ -59,7 +59,7 @@ export function FormOficina({ acao, inicial, botao }: Props) {
       <button
         type="submit"
         disabled={pendente}
-        className="min-h-12 w-full rounded-md bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+        className="min-h-12 w-full rounded-md bg-placa px-4 py-2 font-medium text-white hover:bg-placa-escuro disabled:opacity-50"
       >
         {pendente ? "Aguarde..." : botao}
       </button>

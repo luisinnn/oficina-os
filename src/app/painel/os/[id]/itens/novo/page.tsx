@@ -13,7 +13,7 @@ export const metadata: Metadata = { title: "Novo item | oficina-os" };
 export default function NovoItemPage({ params, searchParams }: PageProps<"/painel/os/[id]/itens/novo">) {
   return (
     <section className="mx-auto max-w-md space-y-4">
-      <Suspense fallback={<p className="text-sm text-zinc-400">Carregando...</p>}>
+      <Suspense fallback={<p className="text-sm text-zinc-600">Carregando...</p>}>
         <NovoItem params={params} searchParams={searchParams} />
       </Suspense>
     </section>
@@ -38,7 +38,7 @@ async function NovoItem({ params, searchParams }: PageProps<"/painel/os/[id]/ite
           enviado={foiEnviado(orcamento.estado)}
         />
       </div>
-      <Link href={`/painel/os/${id}`} className="flex min-h-12 items-center font-medium text-blue-600 hover:underline">
+      <Link href={`/painel/os/${id}`} className="flex min-h-12 items-center font-medium text-placa hover:underline">
         ← Voltar para a OS
       </Link>
     </>

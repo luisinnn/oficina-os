@@ -38,7 +38,7 @@ export function AcoesStatus({ ordemId, status }: { ordemId: string; status: Stat
           name="novo_status"
           value={proximo}
           disabled={pendente}
-          className="min-h-14 w-full rounded-md bg-blue-600 px-4 text-lg font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
+          className="min-h-14 w-full rounded-md bg-placa px-4 text-lg font-semibold text-white hover:bg-placa-escuro disabled:opacity-50"
         >
           Avançar para {ROTULO_STATUS[proximo]}
         </button>

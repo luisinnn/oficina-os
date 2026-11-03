@@ -20,6 +20,13 @@ export function validarPlaca(placa: string): boolean {
   return PLACA.test(placa);
 }
 
+// Placa como está escrita na chapa: "ABC1234" -> "ABC-1234" (antiga, com
+// hífen); Mercosul "ABC1D23" fica igual. Só para mostrar: no banco não tem hífen.
+export function formatarPlaca(placa: string): string {
+  const antiga = validarPlaca(placa) && /[0-9]/.test(placa[4]);
+  return antiga ? `${placa.slice(0, 3)}-${placa.slice(3)}` : placa;
+}
+
 // Telefone só com dígitos: DDD + número (10 fixo, 11 celular).
 const TELEFONE = /^[0-9]{10,11}$/;
 

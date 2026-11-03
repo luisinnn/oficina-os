@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   formatarDataHora,
+  formatarPlaca,
   formatarTelefone,
   normalizarPlaca,
   normalizarTelefone,
@@ -81,5 +82,17 @@ describe("formatarDataHora", () => {
 
   it("vira o dia pelo fuso de São Paulo, não pelo UTC", () => {
     expect(formatarDataHora("2026-10-28T01:00:00Z")).toBe("27/10/2026 22:00");
+  });
+});
+
+describe("formatarPlaca", () => {
+  // Como está escrito na placa de verdade: a antiga tem hífen, a Mercosul não.
+  it.each([
+    ["ABC1234", "ABC-1234"],
+    ["ABC1D23", "ABC1D23"],
+    // Fora do formato (não deveria vir do banco): mostra como veio.
+    ["XYZ", "XYZ"],
+  ])("%j -> %j", (placa, esperada) => {
+    expect(formatarPlaca(placa)).toBe(esperada);
   });
 });

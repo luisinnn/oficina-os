@@ -37,9 +37,9 @@ export function LinkPreCadastro({ link }: { link: string }) {
         value={link}
         aria-label="Link de pré-cadastro"
         onFocus={(e) => e.currentTarget.select()}
-        className="min-h-12 w-full rounded-md border border-zinc-300 bg-zinc-50 px-3 py-2 font-mono text-sm text-zinc-900"
+        className="min-h-12 w-full rounded-md border border-zinc-300 bg-zinc-50 px-3 py-2 text-sm text-zinc-900"
       />
-      <button type="button" onClick={copiar} className={`${classeBotao} bg-blue-600 text-white hover:bg-blue-700`}>
+      <button type="button" onClick={copiar} className={`${classeBotao} bg-placa text-white hover:bg-placa-escuro`}>
         {copiado === "sim" ? "Copiado!" : "Copiar"}
       </button>
       {copiado === "falhou" && (

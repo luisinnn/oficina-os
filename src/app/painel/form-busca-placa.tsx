@@ -8,7 +8,7 @@ export function FormBuscaPlaca() {
 
   return (
     <form action={enviar} role="search">
-      <label htmlFor="busca-placa" className="text-sm font-medium text-zinc-700">
+      <label htmlFor="busca-placa" className="text-sm font-semibold">
         Buscar placa
       </label>
       <div className="mt-1 flex gap-2">
@@ -25,12 +25,12 @@ export function FormBuscaPlaca() {
           defaultValue={estado.placa}
           aria-invalid={estado.erro ? true : undefined}
           aria-describedby={estado.erro ? "erro-busca" : undefined}
-          className="min-h-12 min-w-0 flex-1 rounded-md border border-zinc-300 px-3 py-2 text-base uppercase text-zinc-900 focus:border-blue-500 focus:outline-none aria-invalid:border-red-500"
+          className="min-h-12 min-w-0 flex-1 rounded-lg border-2 border-zinc-500 bg-chapa px-3 py-2 font-condensada text-titulo font-bold uppercase tracking-wide text-grafite placeholder:font-sans placeholder:text-base placeholder:font-normal placeholder:tracking-normal focus:border-placa focus:outline-none aria-invalid:border-red-500"
         />
         <button
           type="submit"
           disabled={pendente}
-          className="min-h-12 shrink-0 rounded-md border border-zinc-300 bg-white px-4 font-medium text-zinc-800 hover:bg-zinc-50 disabled:opacity-50"
+          className="min-h-12 shrink-0 rounded-lg border-2 border-grafite bg-chapa px-4 font-semibold text-grafite hover:bg-zinc-100 disabled:opacity-50"
         >
           Buscar
         </button>

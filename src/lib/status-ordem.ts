@@ -20,6 +20,16 @@ export function estaAberta(status: StatusOrdem): boolean {
   return (STATUS_ABERTOS as readonly StatusOrdem[]).includes(status);
 }
 
+export type StatusAberto = (typeof STATUS_ABERTOS)[number];
+
+// As OS abertas separadas nos grupos da tela inicial, na ordem de
+// STATUS_ABERTOS. Cada grupo mantém a ordem em que as OS chegaram.
+export function agruparPorStatus<T extends { status: StatusOrdem }>(
+  ordens: readonly T[],
+): { status: StatusAberto; ordens: T[] }[] {
+  return STATUS_ABERTOS.map((status) => ({ status, ordens: ordens.filter((os) => os.status === status) }));
+}
+
 // Transições (as mesmas da função mudar_status, migração *_mudar_status.sql):
 // avança e volta um passo pelo FLUXO; entregue não volta; cancela de
 // qualquer status aberto; cancelada não volta.

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { Placa } from "@/components/placa";
 import { formatarDataHora, formatarTelefone } from "@/lib/formatos";
 import { buscarCarro, buscarPreCadastro } from "@/lib/ordens";
 import { textoOsAberta } from "@/lib/status-ordem";
@@ -12,7 +13,7 @@ export const metadata: Metadata = { title: "Pré-cadastro | oficina-os" };
 // Detalhe do pré-cadastro: dados enviados pelo cliente e Confirmar/Descartar.
 export default function PreCadastroPage({ params }: PageProps<"/painel/pre-cadastros/[id]">) {
   return (
-    <Suspense fallback={<p className="text-sm text-zinc-400">Carregando...</p>}>
+    <Suspense fallback={<p className="text-sm text-zinc-600">Carregando...</p>}>
       <Detalhe params={params} />
     </Suspense>
   );
@@ -33,7 +34,7 @@ async function Detalhe({ params }: Pick<PageProps<"/painel/pre-cadastros/[id]">,
 
       <dl className="space-y-3 rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
         <Item rotulo="Carro">
-          <span className="font-mono font-semibold">{pre.placa}</span> · {pre.modelo}
+          <Placa placa={pre.placa} tamanho="p" /> · {pre.modelo}
         </Item>
         <Item rotulo="Cliente">
           {pre.nome} · {formatarTelefone(pre.telefone)}
@@ -51,7 +52,7 @@ async function Detalhe({ params }: Pick<PageProps<"/painel/pre-cadastros/[id]">,
               Já confirmado.
               <Link
                 href={`/painel/os/${pre.ordem_id}`}
-                className="mt-1 flex min-h-12 items-center font-medium text-blue-700 underline"
+                className="mt-1 flex min-h-12 items-center font-medium text-placa underline"
               >
                 Abrir a OS
               </Link>
@@ -93,7 +94,7 @@ async function Detalhe({ params }: Pick<PageProps<"/painel/pre-cadastros/[id]">,
         </>
       )}
 
-      <Link href="/painel" className="flex min-h-12 items-center font-medium text-blue-600 hover:underline">
+      <Link href="/painel" className="flex min-h-12 items-center font-medium text-placa hover:underline">
         ← Voltar para o início
       </Link>
     </section>
@@ -103,7 +104,7 @@ async function Detalhe({ params }: Pick<PageProps<"/painel/pre-cadastros/[id]">,
 function Pessoa({ titulo, nome, telefone }: { titulo: string; nome: string; telefone: string }) {
   return (
     <div className="rounded-md border border-amber-200 bg-white p-2">
-      <p className="text-zinc-500">{titulo}</p>
+      <p className="text-zinc-600">{titulo}</p>
       <p className="break-words font-medium">{nome}</p>
       <p>{formatarTelefone(telefone)}</p>
     </div>
@@ -113,7 +114,7 @@ function Pessoa({ titulo, nome, telefone }: { titulo: string; nome: string; tele
 function Item({ rotulo, children }: { rotulo: string; children: React.ReactNode }) {
   return (
     <div>
-      <dt className="text-sm text-zinc-500">{rotulo}</dt>
+      <dt className="text-sm text-zinc-600">{rotulo}</dt>
       <dd className="break-words text-zinc-900">{children}</dd>
     </div>
   );

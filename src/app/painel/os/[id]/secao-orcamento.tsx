@@ -19,7 +19,7 @@ export function SecaoOrcamento({ ordemId, orcamento }: { ordemId: string; orcame
       </div>
 
       {orcamento.itens.length === 0 ? (
-        <p className="text-zinc-500">Nenhum item ainda.</p>
+        <p className="text-zinc-600">Nenhum item ainda.</p>
       ) : (
         <ul className="divide-y divide-zinc-200">
           {orcamento.itens.map((item) => (
@@ -30,7 +30,7 @@ export function SecaoOrcamento({ ordemId, orcamento }: { ordemId: string; orcame
               >
                 <span className="min-w-0">
                   <span className="block break-words text-zinc-900">{item.descricao}</span>
-                  <span className="block text-sm text-zinc-500">
+                  <span className="block text-sm text-zinc-600">
                     {ROTULO_TIPO[item.tipo]} · {item.quantidade} × {formatarReais(item.valor_unitario_centavos)}
                   </span>
                 </span>
@@ -65,7 +65,7 @@ export function SecaoOrcamento({ ordemId, orcamento }: { ordemId: string; orcame
                   <EtiquetaOrcamento estado={r.resposta} />
                   <span className="font-medium text-zinc-900">{formatarReais(r.total_centavos)}</span>
                 </span>
-                <span className="mt-1 block text-zinc-500">{formatarDataHora(r.respondido_em)}</span>
+                <span className="mt-1 block text-zinc-600">{formatarDataHora(r.respondido_em)}</span>
                 {r.motivo && <span className="mt-1 block break-words text-zinc-800">Motivo: {r.motivo}</span>}
               </li>
             ))}
@@ -80,7 +80,7 @@ function BotaoAdicionar({ href, children }: { href: string; children: React.Reac
   return (
     <Link
       href={href}
-      className="flex min-h-12 items-center justify-center rounded-md border border-blue-600 px-3 font-medium text-blue-700 hover:bg-blue-50"
+      className="flex min-h-12 items-center justify-center rounded-md border border-placa px-3 font-medium text-placa hover:bg-placa/10"
     >
       {children}
     </Link>

@@ -30,7 +30,7 @@ export function BotaoWhatsApp({ ordemId, jaEnviado }: { ordemId: string; jaEnvia
         {pendente ? "Abrindo o WhatsApp..." : "Enviar pelo WhatsApp"}
       </button>
       {jaEnviado && (
-        <p className="text-sm text-zinc-500">Reenviar gera um link novo; o que já foi enviado para de funcionar.</p>
+        <p className="text-sm text-zinc-600">Reenviar gera um link novo; o que já foi enviado para de funcionar.</p>
       )}
     </form>
   );
