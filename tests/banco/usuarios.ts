@@ -6,7 +6,7 @@ const url = process.env.SUPABASE_URL!;
 const chave = process.env.SUPABASE_PUBLISHABLE_KEY!;
 const mailpit = process.env.MAILPIT_URL!;
 
-const SENHA = "senha-de-teste-123";
+export const SENHA = "senha-de-teste-123";
 
 export function clienteAnonimo(): SupabaseClient {
   return createClient(url, chave, { auth: { persistSession: false } });

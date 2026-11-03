@@ -21,7 +21,7 @@ as rotas públicas só fazem o que devem. Obrigatório passar antes do deploy (1
 - [ ] `update`/`delete` em linhas de B por id → 0 linhas afetadas.
 - [ ] `insert` com `oficina_id` de B → recusado.
 - [ ] `insert` de OS de A apontando para veículo/cliente de B → recusado.
-- [ ] RPCs autenticadas (`criar_ordem`, `mudar_status`, `enviar_orcamento`, `confirmar_pre_cadastro`, `descartar_pre_cadastro`) com ids de B → erro.
+- [ ] RPCs autenticadas (`criar_ordem`, `mudar_status`, `enviar_orcamento`, `confirmar_pre_cadastro`, `descartar_pre_cadastro`) com ids de B → erro. (`criar_ordem` não recebe id: com a placa e o telefone de B, cria a OS em A e não mexe em B.)
 - [ ] A não consegue se colocar em `oficina_membros` da oficina de B.
 - [ ] A não altera colunas protegidas da própria oficina por update direto: `oficinas.codigo_publico`, `oficinas.proximo_numero_os`, `ordens.status`/`numero`/`oficina_id`, qualquer coluna de `orcamentos`.
 - [ ] Teste "de catálogo": consulta `information_schema.column_privileges` e confere que `authenticated` só tem `UPDATE` nas colunas da lista permitida (pega `grant` esquecido em migração nova).
