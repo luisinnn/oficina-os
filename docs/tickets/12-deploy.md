@@ -6,16 +6,16 @@
 
 Colocar no ar para o primo usar, com o banco de produção idêntico ao testado.
 
-## Decisões pendentes (resolver antes de começar este ticket)
+## Decisões (2026-11-03)
 
-- **Hospedagem:** o plano grátis da Vercel (Hobby) é só para uso pessoal, não comercial, e a oficina do primo é uso comercial. As opções são Vercel Pro (pago), outra hospedagem grátis que permita uso comercial, ou servidor próprio (ex.: EC2 t3.micro). Se não for Vercel, os passos 3 e 7 mudam bastante (Docker/Node no servidor, HTTPS, deploy pelo GitHub Actions).
-- **Repositório público ou privado:** público é bom para o portfólio, mas com cliente pagante o normal é privado (muitos contratos exigem). Se virar privado, o backup (11) fica mais simples, e o portfólio pode mostrar uma cópia sem dados.
+- **Hospedagem:** VPS do Luis (t3.micro com IP fixo e swap), e não a Vercel: o plano grátis dela não permite uso comercial. App em Docker com Caddy na frente para o HTTPS. O build da imagem roda no GitHub Actions, porque a t3.micro tem pouca memória para o build do Next, e a imagem vai para o GHCR.
+- **Repositório:** continua público. O código não tem segredos, e o backup (11) já sai criptografado.
 
 ## Passos
 
 1. **Supabase:** criar o projeto (região São Paulo). `npx supabase link` + `npx supabase db push` para aplicar as migrações.
 2. **Auth:** Site URL e Redirect URLs exatas (`https://<dominio>/auth/callback`); senha mínima 8; Confirm email ligado.
-3. **Vercel:** importar `luisinnn/oficina-os`; variáveis `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `NEXT_PUBLIC_SITE_URL`. Nunca a chave secret.
+3. **VPS + GitHub:** preparar a VPS (Docker, usuário `deploy`, chave só para o `deploy.sh`) e criar as variáveis `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` e `NEXT_PUBLIC_SITE_URL`, mais os segredos `VPS_*`. Nunca a chave secret. Passo a passo no README, seção "Deploy".
 4. **Backup:** criar segredos do ticket 11 no GitHub e rodar o workflow uma vez manualmente.
 5. **Verificação:** rodar a lista manual do ticket 10 em produção com duas contas de teste; depois apagar essas contas.
 6. **Entrega:** criar a conta do primo, onboarding com o nome da oficina, colar o link de pré-cadastro no WhatsApp Business e no Google.

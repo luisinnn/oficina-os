@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Produção roda em Docker na VPS (ticket 12): o build gera uma pasta
+  // .next/standalone só com o necessário para o "node server.js".
+  output: "standalone",
   // "/" não tem tela própria: manda para o painel.
   // (Se não estiver logado, o proxy ainda desvia para /login.)
   async redirects() {

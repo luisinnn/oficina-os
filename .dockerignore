@@ -1,0 +1,14 @@
+# Fora da imagem: o .env.local tem as chaves do Supabase LOCAL, e o resto
+# só deixaria o build mais lento.
+.env*
+.git
+.github
+.next
+node_modules
+docs
+tests
+supabase
+scripts
+deploy
+*.tsbuildinfo
+next-env.d.ts

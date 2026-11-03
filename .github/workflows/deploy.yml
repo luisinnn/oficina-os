@@ -1,0 +1,128 @@
+# Deploy em produção (ticket 12): depois do CI verde na main, gera a imagem
+# Docker, publica no GHCR e manda a VPS rodar o deploy/deploy.sh por SSH.
+# Passo a passo da VPS e dos segredos: README, seção "Deploy".
+name: Deploy
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch: # botão "Run workflow": publica a main de novo
+
+# Um deploy por vez; um novo espera o anterior terminar.
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  # Sem a configuração (criada no ticket 12) o deploy fica pulado em vez de
+  # falhar a cada push.
+  configurado:
+    name: Configuração do deploy existe?
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    outputs:
+      ok: ${{ steps.conferir.outputs.ok }}
+    steps:
+      - id: conferir
+        env:
+          OK: >-
+            ${{ vars.NEXT_PUBLIC_SUPABASE_URL != '' && vars.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY != ''
+            && vars.NEXT_PUBLIC_SITE_URL != '' && secrets.VPS_HOST != '' && secrets.VPS_SSH_KEY != ''
+            && secrets.VPS_KNOWN_HOSTS != '' }}
+        run: |
+          echo "ok=$OK" >> "$GITHUB_OUTPUT"
+          if [ "$OK" != "true" ]; then
+            echo "::notice::Faltam variáveis/segredos do deploy (README, seção Deploy). Deploy pulado."
+          fi
+
+  imagem:
+    name: Gerar e publicar a imagem
+    needs: configurado
+    # Só a main deste repo, e só depois do CI verde de um push (nunca de um
+    # pull request, nem de um fork com um branch chamado "main").
+    if: >-
+      needs.configurado.outputs.ok == 'true' && (
+        (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+        (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push'
+         && github.event.workflow_run.head_repository.full_name == github.repository)
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      packages: write # publicar no ghcr.io
+    env:
+      # O commit que o CI aprovou (ou a main, pelo botão).
+      SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
+    outputs:
+      sha: ${{ env.SHA }}
+    steps:
+      - name: Baixar o código do commit aprovado
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ env.SHA }}
+
+      - uses: docker/setup-buildx-action@v4
+
+      - name: Entrar no GHCR
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+
+      - name: Build e push
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/${{ github.repository }}:${{ env.SHA }}
+          labels: org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+          # Valores públicos (vão para o navegador). Nunca a chave secret.
+          build-args: |
+            NEXT_PUBLIC_SUPABASE_URL=${{ vars.NEXT_PUBLIC_SUPABASE_URL }}
+            NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=${{ vars.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+            NEXT_PUBLIC_SITE_URL=${{ vars.NEXT_PUBLIC_SITE_URL }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  publicar:
+    name: Publicar na VPS
+    needs: imagem
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: producao
+      url: ${{ vars.NEXT_PUBLIC_SITE_URL }}
+    steps:
+      # A chave só consegue rodar o deploy.sh na VPS (command= no
+      # authorized_keys); o commit vai como "comando" do SSH.
+      - name: Rodar o deploy.sh na VPS
+        env:
+          SHA: ${{ needs.imagem.outputs.sha }}
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+          VPS_KNOWN_HOSTS: ${{ secrets.VPS_KNOWN_HOSTS }}
+        run: |
+          umask 077
+          printf '%s\n' "$VPS_SSH_KEY" > "$RUNNER_TEMP/chave"
+          printf '%s\n' "$VPS_KNOWN_HOSTS" > "$RUNNER_TEMP/known_hosts"
+          ssh -i "$RUNNER_TEMP/chave" -o UserKnownHostsFile="$RUNNER_TEMP/known_hosts" \
+            -o StrictHostKeyChecking=yes -o BatchMode=yes \
+            "deploy@$VPS_HOST" "$SHA"
+
+      - name: Conferir se o site respondeu
+        env:
+          SITE_URL: ${{ vars.NEXT_PUBLIC_SITE_URL }}
+        run: |
+          for _ in $(seq 1 24); do
+            if curl -fsS -o /dev/null "$SITE_URL/login"; then echo "no ar: $SITE_URL"; exit 0; fi
+            sleep 5
+          done
+          echo "::error::$SITE_URL/login não respondeu 200 em 2 minutos."
+          exit 1

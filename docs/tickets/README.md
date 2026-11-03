@@ -8,7 +8,7 @@ Primeiro cliente real: oficina do primo. Feito em cima do template
 
 - Um commit (ou poucos) por ticket, na `main`, citando o ticket: `#03 Cria tabelas de OS`.
 - Push só depois do ticket fechado, com lint/tipos/testes passando, e com OK do Luis.
-- Sem Vercel até o ticket 12. Depois que estiver em produção, passamos a usar branch + pull request.
+- Nada em produção até o ticket 12. Depois que estiver em produção, passamos a usar branch + pull request.
 - Desenvolvimento 100% no Supabase local (Docker). Nenhuma chave real no PC até o deploy.
 
 ## Ordem e dependências

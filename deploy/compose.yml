@@ -1,0 +1,32 @@
+# Produção na VPS (ticket 12). O deploy.sh baixa este arquivo do commit que
+# vai ao ar e grava o .env ao lado (DOMINIO e TAG).
+services:
+  app:
+    image: ghcr.io/luisinnn/oficina-os:${TAG:?rode pelo deploy.sh}
+    restart: unless-stopped
+    # Sem porta aberta: só o Caddy fala com o app, pela rede interna.
+    mem_limit: 512m
+    logging: &logs
+      driver: json-file
+      options: { max-size: "10m", max-file: "3" }
+
+  caddy:
+    image: caddy:2.11-alpine
+    restart: unless-stopped
+    depends_on: [app]
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      DOMINIO: ${DOMINIO:?falta DOMINIO no config.env}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data # certificados HTTPS: não apagar
+      - caddy_config:/config
+    mem_limit: 128m
+    logging: *logs
+
+volumes:
+  caddy_data:
+  caddy_config:

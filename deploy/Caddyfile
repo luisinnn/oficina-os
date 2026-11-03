@@ -1,0 +1,7 @@
+# HTTPS automático (Let's Encrypt) para o domínio do config.env. O Caddy
+# também redireciona http -> https.
+{$DOMINIO} {
+	encode zstd gzip
+	header Strict-Transport-Security "max-age=31536000"
+	reverse_proxy app:3000
+}
