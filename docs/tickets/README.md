@@ -27,6 +27,7 @@ Primeiro cliente real: oficina do primo. Feito em cima do template
 | 10 | [Teste de segurança](10-teste-seguranca.md) | segurança | 08, 09 | [ ] |
 | 11 | [Backup semanal](11-backup.md) | infra | 01 | [ ] |
 | 12 | [Deploy em produção](12-deploy.md) | infra, segurança | todos | [ ] |
+| 13 | [Melhoria visual do painel](13-melhoria-visual-painel.md) | tela | 09 | [ ] |
 
 ## Decisões que valem para todos os tickets
 
