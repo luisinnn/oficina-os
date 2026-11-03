@@ -1,9 +1,10 @@
 import "server-only";
 import { getUsuario } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
+import { filtroBusca, type LimitesMes, type TermoBusca } from "@/lib/historico";
 import { type AvisoDeKm, kmMenorQueUltima, textoKmMenor, ultimaKm, type Tanque } from "@/lib/km";
 import type { DadosItem, EstadoOrcamento } from "@/lib/orcamento";
-import { STATUS_ABERTOS, estaAberta, type StatusOrdem } from "@/lib/status-ordem";
+import { STATUS_ABERTOS, estaAberta, type StatusFechado, type StatusOrdem } from "@/lib/status-ordem";
 
 // Leituras de OS, veículos e clientes para as telas do painel. O RLS só
 // devolve dados da oficina do usuário logado, então não precisa filtrar.
@@ -233,4 +234,51 @@ export async function buscarPreCadastro(id: string): Promise<PreCadastro | null>
   const { data, error } = await supabase.from("pre_cadastros").select(COLUNAS_PRE).eq("id", id).maybeSingle();
   if (error) falhou("o pré-cadastro", error);
   return data as PreCadastro | null;
+}
+
+// Uma linha da view historico_ordens (ticket 14).
+export type OrdemFechada = {
+  id: string;
+  numero: number;
+  status: StatusFechado;
+  fechada_em: string;
+  km: number | null;
+  placa: string;
+  modelo: string;
+  cliente: string;
+  // Total que o cliente aprovou. null = sem orçamento aprovado.
+  valor_centavos: number | null;
+};
+
+const COLUNAS_HISTORICO = "id, numero, status, fechada_em, km, placa, modelo, cliente, valor_centavos";
+
+// A busca junta todos os meses: mostra só as mais recentes.
+export const LIMITE_BUSCA_HISTORICO = 50;
+
+// OS fechadas no mês (limites de limitesDoMes), da mais recente para a mais antiga.
+export async function listarFechadasDoMes(limites: LimitesMes): Promise<OrdemFechada[]> {
+  await getUsuario();
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("historico_ordens")
+    .select(COLUNAS_HISTORICO)
+    .gte("fechada_em", limites.inicio)
+    .lt("fechada_em", limites.fim)
+    .order("fechada_em", { ascending: false });
+  if (error) falhou("o histórico", error);
+  return data as OrdemFechada[];
+}
+
+// Busca por parte do nome do cliente ou da placa, sem diferenciar maiúscula.
+export async function buscarFechadas(termo: TermoBusca): Promise<OrdemFechada[]> {
+  await getUsuario();
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("historico_ordens")
+    .select(COLUNAS_HISTORICO)
+    .or(filtroBusca(termo))
+    .order("fechada_em", { ascending: false })
+    .limit(LIMITE_BUSCA_HISTORICO);
+  if (error) falhou("o histórico", error);
+  return data as OrdemFechada[];
 }

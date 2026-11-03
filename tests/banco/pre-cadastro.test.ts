@@ -70,7 +70,7 @@ async function osBalcao(u: UsuarioComOficina, placa: string) {
 
 // Fecha a OS (cancelada) para o carro ficar livre para outra.
 const cancelar = (ordem: string) =>
-  sqlAdmin(`update public.ordens set status = 'cancelada' where id = '${ordem}'`);
+  sqlAdmin(`update public.ordens set status = 'cancelada', cancelada_em = now() where id = '${ordem}'`);
 
 // Joga os envios da oficina para 2 horas atrás: o limite por hora não acumula
 // entre os testes.

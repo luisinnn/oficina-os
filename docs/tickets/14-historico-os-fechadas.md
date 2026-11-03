@@ -14,8 +14,9 @@ placa daquele carro. O dono precisa de uma visão geral para ter controle:
 - **Mês da OS** = mês em que ela fechou: `entregue_em` para entregue, `cancelada_em` para cancelada,
   no fuso `America/Sao_Paulo`.
 - **Valor** = total da resposta de aprovação do cliente (`orcamento_respostas.total_centavos`
-  da última resposta, quando o orçamento está `aprovado`). É o valor que o cliente aceitou,
-  mesmo que o orçamento tenha sido mexido depois. Sem orçamento aprovado: "sem valor".
+  da última resposta, quando ela foi de aprovação). É o valor que o cliente aceitou,
+  mesmo que o orçamento tenha sido mexido depois (mexer volta o orçamento para rascunho, mas
+  não apaga a resposta). Sem resposta ou com a última recusando: "sem valor".
 - **Total do mês** = soma dos valores das OS **entregues** do mês. Cancelada aparece na lista,
   mas não soma.
 - **Busca** por placa ou nome do cliente procura em **todos os meses** (até as 50 mais recentes)

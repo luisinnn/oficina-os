@@ -15,7 +15,10 @@ export default function PainelLayout({ children }: LayoutProps<"/painel">) {
           <Suspense fallback={<NomeOficina nome="oficina-os" />}>
             <OficinaAtual />
           </Suspense>
-          <nav className="flex shrink-0 items-center gap-4">
+          <nav className="flex shrink-0 items-center gap-3 sm:gap-4">
+            <Link href="/painel/historico" className="flex min-h-12 items-center font-semibold hover:underline">
+              Histórico
+            </Link>
             <Link href="/painel/configuracoes" className="flex min-h-12 items-center font-semibold hover:underline">
               Configurações
             </Link>

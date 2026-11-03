@@ -50,9 +50,12 @@ export function formatarTelefone(telefone: string): string {
   return partes ? `(${partes[1]}) ${partes[2]}-${partes[3]}` : telefone;
 }
 
-// Data e hora no fuso da oficina (o servidor pode estar em UTC).
+// Fuso da oficina: datas sempre mostradas e contadas nele (o servidor pode estar em UTC).
+export const FUSO = "America/Sao_Paulo";
+
+// Data e hora no fuso da oficina.
 const dataHora = new Intl.DateTimeFormat("pt-BR", {
-  timeZone: "America/Sao_Paulo",
+  timeZone: FUSO,
   day: "2-digit",
   month: "2-digit",
   year: "numeric",

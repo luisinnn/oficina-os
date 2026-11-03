@@ -22,6 +22,13 @@ export function estaAberta(status: StatusOrdem): boolean {
 
 export type StatusAberto = (typeof STATUS_ABERTOS)[number];
 
+// OS "fechada" = saiu da oficina. Vão para o histórico (ticket 14). O mesmo
+// filtro está na view historico_ordens e no índice ordens_fechada_em_idx
+// (migração *_historico.sql).
+export const STATUS_FECHADOS = ["entregue", "cancelada"] as const satisfies StatusOrdem[];
+
+export type StatusFechado = (typeof STATUS_FECHADOS)[number];
+
 // As OS abertas separadas nos grupos da tela inicial, na ordem de
 // STATUS_ABERTOS. Cada grupo mantém a ordem em que as OS chegaram.
 export function agruparPorStatus<T extends { status: StatusOrdem }>(
