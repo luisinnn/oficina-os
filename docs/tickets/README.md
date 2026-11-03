@@ -27,7 +27,7 @@ Primeiro cliente real: oficina do primo. Feito em cima do template
 | 10 | [Teste de segurança](10-teste-seguranca.md) | segurança | 08, 09 | [ ] |
 | 11 | [Backup semanal](11-backup.md) | infra | 01 | [ ] |
 | 12 | [Deploy em produção](12-deploy.md) | infra, segurança | todos | [ ] |
-| 13 | [Melhoria visual do painel](13-melhoria-visual-painel.md) | tela | 09 | [ ] |
+| 13 | [Melhoria visual do painel](13-melhoria-visual-painel.md) | tela | 09 | [x] |
 | 14 | [Histórico das OS fechadas](14-historico-os-fechadas.md) | banco, tela | 13 | [ ] |
 | 15 | [Km de entrada e nível do tanque](15-km-de-entrada.md) | banco, tela | 09 | [x] |
 
