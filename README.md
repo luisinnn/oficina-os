@@ -76,6 +76,7 @@ A configuração do Supabase local (auth, portas, senha mínima, confirmação d
 | `npm test` | Testes rápidos, sem banco (Vitest, arquivos `src/**/*.test.ts`) |
 | `npm run test:watch` | Mesmo que o anterior, repetindo a cada arquivo salvo |
 | `npm run test:db` | Testes de integração contra o Supabase local (`tests/**/*.test.ts`). Criam contas de teste e confirmam o e-mail pelo Mailpit |
+| `npm run test:navegador` | Lista manual de segurança num navegador de verdade (Playwright). Precisa do `npm run dev` rodando |
 | `npm run db:start` | Sobe o Supabase local |
 | `npm run db:stop` | Derruba o Supabase local (os dados ficam guardados) |
 | `npm run db:reset` | Apaga o banco local e recria rodando todas as migrações |
