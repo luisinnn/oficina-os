@@ -24,7 +24,7 @@ Primeiro cliente real: oficina do primo. Feito em cima do template
 | 07 | [Enviar orçamento pelo WhatsApp](07-envio-whatsapp.md) | banco, tela, segurança | 06 | [x] |
 | 08 | [Página pública de aprovação](08-aprovacao-publica.md) | banco, tela, segurança | 07 | [x] |
 | 09 | [Pré-cadastro público e confirmação](09-pre-cadastro.md) | banco, tela, segurança | 04 | [x] |
-| 10 | [Teste de segurança](10-teste-seguranca.md) | segurança | 08, 09 | [ ] |
+| 10 | [Teste de segurança](10-teste-seguranca.md) | segurança | 08, 09 | [x] |
 | 11 | [Backup semanal](11-backup.md) | infra | 01 | [ ] |
 | 12 | [Deploy em produção](12-deploy.md) | infra, segurança | todos | [ ] |
 | 13 | [Melhoria visual do painel](13-melhoria-visual-painel.md) | tela | 09 | [x] |
