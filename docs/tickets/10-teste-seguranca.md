@@ -36,8 +36,13 @@ as rotas públicas só fazem o que devem. Obrigatório passar antes do deploy (1
 
 ## Lista manual (rodar de novo em produção no ticket 12)
 
-- [ ] Com o DevTools aberto, navegar logado como A: nenhuma resposta de rede contém dados de B.
-- [ ] Abrir `/painel/os/<id de B>` logado como A → "não encontrado".
-- [ ] `/aprovar/<token>` e `/p/<codigo>` funcionam em aba anônima; `/painel` em aba anônima → login.
-- [ ] Ver o código-fonte da página pública: nenhum id interno nem telefone do cliente.
-- [ ] Scan de segredos no repositório (padrões `sb_secret_`, `service_role`, `eyJhbGci`) vazio.
+No ambiente local, os quatro primeiros itens rodam num navegador de verdade
+(Playwright) em `tests/seguranca/navegador.e2e.ts`: `npm run dev` e depois
+`npm run test:navegador`. O script cria as contas A e B pelo Mailpit do
+Supabase local, então em produção a lista continua sendo feita à mão.
+
+- [x] Com o DevTools aberto, navegar logado como A: nenhuma resposta de rede contém dados de B.
+- [x] Abrir `/painel/os/<id de B>` logado como A → "não encontrado".
+- [x] `/aprovar/<token>` e `/p/<codigo>` funcionam em aba anônima; `/painel` em aba anônima → login.
+- [x] Ver o código-fonte da página pública: nenhum id interno nem telefone do cliente.
+- [x] Scan de segredos no repositório (padrões `sb_secret_`, `service_role`, `eyJhbGci`) vazio.
