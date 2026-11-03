@@ -62,6 +62,7 @@ async function osBalcao(u: UsuarioComOficina, placa: string) {
     nome: "João da Silva",
     telefone: "47911112222",
     problema: "Revisão",
+    km: 50000,
   });
   if (error) throw new Error(`criar_ordem: ${error.message}`);
   return data as string;
@@ -77,7 +78,7 @@ const envelhecer = (u: UsuarioComOficina) =>
   sqlAdmin(`update public.pre_cadastros set created_at = now() - interval '2 hours' where oficina_id = '${u.oficina}'`);
 
 const confirmar = (u: UsuarioComOficina, id: string, trocar_dono: boolean | null = null) =>
-  u.supabase.rpc("confirmar_pre_cadastro", { id, trocar_dono });
+  u.supabase.rpc("confirmar_pre_cadastro", { id, trocar_dono, km: 50000 });
 
 beforeAll(async () => {
   a = await criarUsuarioComOficina("precad-a");
@@ -225,7 +226,7 @@ describe("confirmar_pre_cadastro", () => {
 
     const { data: os } = await a.supabase
       .from("ordens")
-      .select("numero, status, origem, problema, km, obs_interna, veiculos(placa, modelo), clientes(nome, telefone)")
+      .select("numero, status, origem, problema, km, tanque, obs_interna, veiculos(placa, modelo), clientes(nome, telefone)")
       .eq("id", ordem)
       .single();
     expect(os).toMatchObject({
@@ -233,7 +234,8 @@ describe("confirmar_pre_cadastro", () => {
       status: "aguardando",
       origem: "link",
       problema: dados.problema,
-      km: null,
+      km: 50000,
+      tanque: null,
       obs_interna: null,
       veiculos: { placa: dados.placa, modelo: dados.modelo },
       clientes: { nome: dados.nome, telefone: dados.telefone },

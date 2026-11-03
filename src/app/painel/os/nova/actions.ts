@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getOficina } from "@/lib/oficina";
-import { buscarCarro } from "@/lib/ordens";
+import { avisoDeKm, buscarCarro } from "@/lib/ordens";
 import { textoOsAberta } from "@/lib/status-ordem";
 import { createClient } from "@/lib/supabase/server";
 import { chaveTroca, type EstadoNovaOrdem, validarNovaOrdem } from "@/lib/validacao-ordem";
@@ -16,8 +16,15 @@ export async function criarOrdem(
   formData: FormData,
 ): Promise<EstadoNovaOrdem> {
   await getOficina();
-  const { valores, dados, erros } = validarNovaOrdem(formData);
+  const { valores, dados, erros, kmConferida } = validarNovaOrdem(formData);
   if (!dados) return { erros, valores };
+
+  if (!kmConferida) {
+    const avisoKm = await avisoDeKm(dados.placa, dados.km);
+    if (avisoKm) return { valores, avisoKm };
+  }
+  // Depois do aviso, a km confirmada vale também na pergunta de troca de dono.
+  const conferida = kmConferida ? { kmConferida: dados.km } : {};
 
   const supabase = await createClient();
   const { data, error } = await supabase.rpc("criar_ordem", dados);
@@ -31,6 +38,7 @@ export async function criarOrdem(
         const { id, numero, status } = carro.aberta;
         return {
           valores,
+          ...conferida,
           erro: textoOsAberta(numero, status),
           ordemAberta: { id, numero },
         };
@@ -38,6 +46,7 @@ export async function criarOrdem(
       if (carro && error.code === "OS002") {
         return {
           valores,
+          ...conferida,
           confirmarTroca: {
             donoAtual: `${carro.dono.nome} (${formatarTelefone(carro.dono.telefone)})`,
             donoNovo: `${dados.nome} (${formatarTelefone(dados.telefone)})`,
@@ -47,7 +56,7 @@ export async function criarOrdem(
       }
     }
     console.error("criarOrdem:", error.code ?? error.message);
-    return { valores, erro: "Não foi possível salvar a OS. Tente de novo." };
+    return { valores, ...conferida, erro: "Não foi possível salvar a OS. Tente de novo." };
   }
 
   revalidatePath("/painel");

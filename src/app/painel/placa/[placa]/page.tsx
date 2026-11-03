@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { formatarDataHora, formatarTelefone, normalizarPlaca, validarPlaca } from "@/lib/formatos";
 import { Placa } from "@/components/placa";
+import { textoEntrada } from "@/lib/km";
 import { buscarCarro } from "@/lib/ordens";
 import { ROTULO_STATUS, textoOsAberta } from "@/lib/status-ordem";
 
@@ -86,6 +87,10 @@ async function ResultadoPlaca({ params }: Pick<PageProps<"/painel/placa/[placa]"
                   </span>
                 </span>
                 <span className="mt-1 block truncate text-zinc-700">{os.problema}</span>
+                {/* Km de cada visita: mostra quanto o carro rodou entre uma e outra. */}
+                <span className="block text-sm text-zinc-600">
+                  {textoEntrada(os.km, null)}
+                </span>
               </Link>
             </li>
           ))}

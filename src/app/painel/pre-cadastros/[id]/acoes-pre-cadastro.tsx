@@ -1,8 +1,9 @@
 "use client";
-// Botões Confirmar / Descartar do pré-cadastro. Com a placa de outro dono,
-// Confirmar vira "Manter {atual}" e "Trocar dono para {novo}".
+// Km e tanque da chegada + botões Confirmar / Descartar do pré-cadastro. Com a
+// placa de outro dono, Confirmar vira "Manter {atual}" e "Trocar dono para {novo}".
 
 import { useActionState } from "react";
+import { AvisoKm, CampoKm, CampoTanque } from "../../campos-entrada";
 import { responderPreCadastro } from "./actions";
 
 const classeBotao = "min-h-14 w-full rounded-md px-4 text-lg font-semibold disabled:opacity-50";
@@ -19,10 +20,21 @@ type Props = {
 
 export function AcoesPreCadastro({ id, podeConfirmar, troca }: Props) {
   const [estado, responder, pendente] = useActionState(responderPreCadastro, {});
+  const valores = estado.valores ?? { km: "", tanque: "" };
+  const erros = estado.erros ?? {};
 
   return (
-    <form action={responder} className="space-y-3">
+    <form action={responder} className="space-y-3" noValidate>
       <input type="hidden" name="id" value={id} />
+
+      {podeConfirmar && (
+        <div className="space-y-4 rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
+          <p className="text-sm text-zinc-700">Com o carro na oficina, anote a chegada:</p>
+          <CampoKm valor={valores.km} erro={erros.km} />
+          <CampoTanque valor={valores.tanque} erro={erros.tanque} />
+        </div>
+      )}
+
       {estado.erro && (
         <p role="alert" className="rounded-md bg-red-50 p-3 text-sm text-red-700">
           {estado.erro}
@@ -30,7 +42,9 @@ export function AcoesPreCadastro({ id, podeConfirmar, troca }: Props) {
       )}
 
       {podeConfirmar &&
-        (troca ? (
+        (estado.avisoKm ? (
+          <AvisoKm aviso={estado.avisoKm} pendente={pendente} acao={estado.avisoKm.acao} />
+        ) : troca ? (
           <>
             <button type="submit" name="acao" value="manter" disabled={pendente} className={principal}>
               Manter {troca.atual}

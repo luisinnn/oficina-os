@@ -5,8 +5,10 @@ import { Suspense } from "react";
 import { formatarDataHora, formatarTelefone } from "@/lib/formatos";
 import { Placa } from "@/components/placa";
 import { buscarOrcamento, buscarOrdem } from "@/lib/ordens";
-import { ROTULO_STATUS } from "@/lib/status-ordem";
+import { textoEntrada } from "@/lib/km";
+import { ROTULO_STATUS, estaAberta } from "@/lib/status-ordem";
 import { AcoesStatus } from "./acoes-status";
+import { EditarEntrada } from "./editar-entrada";
 import { SecaoOrcamento } from "./secao-orcamento";
 
 export const metadata: Metadata = { title: "OS | oficina-os" };
@@ -42,6 +44,10 @@ async function DetalheOs({ params }: Pick<PageProps<"/painel/os/[id]">, "params"
             <Placa placa={os.veiculos.placa} tamanho="p" />
           </Link>{" "}
           · {os.veiculos.modelo}
+          {/* A km de entrada é a prova da garantia: em destaque, perto da placa. */}
+          <span className={`block font-condensada text-xl ${os.km === null ? "text-zinc-600" : "text-grafite"}`}>
+            {textoEntrada(os.km, os.tanque)}
+          </span>
         </Item>
         <Item rotulo="Cliente">
           {os.clientes.nome} · {formatarTelefone(os.clientes.telefone)}
@@ -49,7 +55,6 @@ async function DetalheOs({ params }: Pick<PageProps<"/painel/os/[id]">, "params"
         <Item rotulo="Problema">
           <span className="whitespace-pre-wrap">{os.problema}</span>
         </Item>
-        {os.km !== null && <Item rotulo="Km">{os.km.toLocaleString("pt-BR")}</Item>}
         {os.obs_interna && (
           <Item rotulo="Observação interna">
             <span className="whitespace-pre-wrap">{os.obs_interna}</span>
@@ -58,6 +63,15 @@ async function DetalheOs({ params }: Pick<PageProps<"/painel/os/[id]">, "params"
         <Item rotulo="Entrada">{formatarDataHora(os.created_at)}</Item>
         {os.entregue_em && <Item rotulo="Entregue">{formatarDataHora(os.entregue_em)}</Item>}
       </dl>
+
+      {estaAberta(os.status) && (
+        <EditarEntrada
+          ordemId={os.id}
+          km={os.km}
+          tanque={os.tanque}
+          kmTravada={orcamento.enviado_em !== null}
+        />
+      )}
 
       <SecaoOrcamento ordemId={os.id} orcamento={orcamento} />
 

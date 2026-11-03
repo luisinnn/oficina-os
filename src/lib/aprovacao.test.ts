@@ -39,6 +39,7 @@ describe("situacaoDoLink", () => {
     numero: 1,
     placa: "ABC1D23",
     modelo: "Gol",
+    km: 120300,
     itens: [],
     total_centavos: 0,
     estado: "enviado",

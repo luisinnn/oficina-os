@@ -1,6 +1,7 @@
 import "server-only";
 import { getUsuario } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
+import { type AvisoDeKm, kmMenorQueUltima, textoKmMenor, ultimaKm, type Tanque } from "@/lib/km";
 import type { DadosItem, EstadoOrcamento } from "@/lib/orcamento";
 import { STATUS_ABERTOS, estaAberta, type StatusOrdem } from "@/lib/status-ordem";
 
@@ -15,6 +16,7 @@ export type OrdemResumo = {
   status: StatusOrdem;
   problema: string;
   created_at: string;
+  km: number | null;
 };
 
 export type OrdemAtiva = Pick<OrdemResumo, "id" | "numero" | "status"> & {
@@ -34,7 +36,7 @@ export type Carro = {
 };
 
 export type Ordem = OrdemResumo & {
-  km: number | null;
+  tanque: Tanque | null;
   obs_interna: string | null;
   entregue_em: string | null;
   veiculos: { placa: string; modelo: string };
@@ -75,7 +77,7 @@ export async function buscarCarro(placa: string): Promise<Carro | null> {
 
   const ordens = await supabase
     .from("ordens")
-    .select("id, numero, status, problema, created_at")
+    .select("id, numero, status, problema, created_at, km")
     .eq("veiculo_id", data.id)
     .order("numero", { ascending: false });
   if (ordens.error) falhou("o histórico", ordens.error);
@@ -102,12 +104,25 @@ export async function buscarOrdem(id: string): Promise<Ordem | null> {
   const { data, error } = await supabase
     .from("ordens")
     .select(
-      "id, numero, status, problema, created_at, entregue_em, km, obs_interna, veiculos(placa, modelo), clientes(nome, telefone)",
+      "id, numero, status, problema, created_at, entregue_em, km, tanque, obs_interna, veiculos(placa, modelo), clientes(nome, telefone)",
     )
     .eq("id", id)
     .maybeSingle();
   if (error) falhou("a OS", error);
   return data as unknown as Ordem | null;
+}
+
+// Aviso "Confere a km?" quando a km é menor que a da última OS deste carro
+// (exceto = a própria OS, ao corrigir). null = sem aviso. Não bloqueia.
+export async function avisoDeKm(
+  placa: string,
+  km: number,
+  exceto?: string,
+): Promise<AvisoDeKm | null> {
+  const carro = await buscarCarro(placa);
+  const ultima = carro ? ultimaKm(carro.historico, exceto) : null;
+  if (ultima === null || !kmMenorQueUltima(km, ultima)) return null;
+  return { texto: textoKmMenor(ultima), km };
 }
 
 export type ItemOrcamento = DadosItem & { id: string };
@@ -123,6 +138,9 @@ export type RespostaCliente = {
 export type Orcamento = {
   id: string;
   estado: EstadoOrcamento;
+  // Enviado ao cliente ao menos uma vez (fica mesmo se voltar a rascunho):
+  // a partir daí a km de entrada não muda mais.
+  enviado_em: string | null;
   total_centavos: number;
   // Na ordem em que foram adicionados.
   itens: ItemOrcamento[];
@@ -142,7 +160,7 @@ export async function buscarOrcamento(ordemId: string): Promise<Orcamento | null
   const { data, error } = await supabase
     .from("orcamentos")
     .select(
-      `id, estado, total_centavos,
+      `id, estado, enviado_em, total_centavos,
        itens:orcamento_itens(${COLUNAS_ITEM}),
        respostas:orcamento_respostas(id, resposta, total_centavos, motivo, respondido_em)`,
     )

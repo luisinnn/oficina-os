@@ -31,7 +31,7 @@ async function novoVeiculo(u: UsuarioComOficina, cliente_id: string, placa: stri
 function inserirOrdem(u: UsuarioComOficina, ordem: Record<string, unknown>) {
   return u.supabase
     .from("ordens")
-    .insert({ problema: "Barulho no freio", ...ordem })
+    .insert({ problema: "Barulho no freio", km: 50000, ...ordem })
     .select("*")
     .single();
 }

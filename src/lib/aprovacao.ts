@@ -17,6 +17,8 @@ export type OrcamentoPublico = {
   numero: number;
   placa: string;
   modelo: string;
+  // Km de entrada (null em OS antigas): o cliente aprova sabendo com quantos km o carro chegou.
+  km: number | null;
   itens: DadosItem[];
   total_centavos: number;
   estado: EstadoOrcamento;

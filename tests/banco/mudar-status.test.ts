@@ -57,6 +57,7 @@ function abrirOrdem(u: UsuarioComOficina, placa: string) {
     nome: "João da Silva",
     telefone: "47911112222",
     problema: "Barulho no freio",
+    km: 50000,
   });
 }
 

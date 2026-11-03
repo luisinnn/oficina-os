@@ -19,6 +19,7 @@ async function novaOs(u: UsuarioComOficina, comItem = true) {
     nome: "João da Silva",
     telefone: "47911112222",
     problema: "Barulho no freio",
+    km: 50000,
   });
   if (error) throw new Error(`criar_ordem: ${error.message}`);
   const orc = await u.supabase.from("orcamentos").select("id").eq("ordem_id", ordem).single();

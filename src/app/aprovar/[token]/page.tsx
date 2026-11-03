@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { type OrcamentoPublico, type Resposta, situacaoDoLink, tokenComFormato } from "@/lib/aprovacao";
 import { formatarReais } from "@/lib/dinheiro";
+import { formatarKm } from "@/lib/km";
 import { ROTULO_TIPO, subtotal } from "@/lib/orcamento";
 import { createClientPublico } from "@/lib/supabase/publico";
 import { FormResposta, LinkInvalido, Respondido } from "./form-resposta";
@@ -44,6 +45,9 @@ async function Orcamento({ params }: Pick<PageProps<"/aprovar/[token]">, "params
         <p className="text-zinc-700">
           {orcamento.modelo} · {orcamento.placa}
         </p>
+        {orcamento.km !== null && (
+          <p className="font-medium text-zinc-900">Entrada com {formatarKm(orcamento.km)}</p>
+        )}
       </header>
 
       <div className="space-y-3 rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">

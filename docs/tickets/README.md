@@ -29,7 +29,7 @@ Primeiro cliente real: oficina do primo. Feito em cima do template
 | 12 | [Deploy em produção](12-deploy.md) | infra, segurança | todos | [ ] |
 | 13 | [Melhoria visual do painel](13-melhoria-visual-painel.md) | tela | 09 | [ ] |
 | 14 | [Histórico das OS fechadas](14-historico-os-fechadas.md) | banco, tela | 13 | [ ] |
-| 15 | [Km de entrada obrigatória](15-km-de-entrada.md) | banco, tela | 09 | [ ] |
+| 15 | [Km de entrada e nível do tanque](15-km-de-entrada.md) | banco, tela | 09 | [ ] |
 
 ## Decisões que valem para todos os tickets
 

@@ -3,6 +3,7 @@
 
 import { centavosParaCampo } from "./dinheiro";
 import { validarTelefone } from "./formatos";
+import { formatarKm } from "./km";
 
 export type DadosMensagem = {
   nomeCliente: string;
@@ -10,6 +11,9 @@ export type DadosMensagem = {
   placa: string;
   oficina: string;
   numero: number;
+  // Km de entrada: o cliente vê junto com o orçamento (prova da garantia).
+  // OS antigas podem não ter.
+  km: number | null;
   totalCentavos: number;
   link: string;
 };
@@ -17,9 +21,10 @@ export type DadosMensagem = {
 // Texto fixo (texto editável ficou fora da v1).
 export function mensagemOrcamento(dados: DadosMensagem): string {
   const primeiroNome = dados.nomeCliente.trim().split(/\s+/)[0];
+  const entrada = dados.km === null ? "" : `, entrada com ${formatarKm(dados.km)}`;
   return (
     `Olá, ${primeiroNome}! Segue o orçamento do ${dados.modelo} (${dados.placa}) na ${dados.oficina}, ` +
-    `OS #${dados.numero}: total R$ ${centavosParaCampo(dados.totalCentavos)}. Para aprovar ou recusar: ${dados.link}`
+    `OS #${dados.numero}${entrada}: total R$ ${centavosParaCampo(dados.totalCentavos)}. Para aprovar ou recusar: ${dados.link}`
   );
 }
 

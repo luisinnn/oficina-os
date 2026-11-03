@@ -32,6 +32,7 @@ async function FormPreenchido({ searchParams }: Pick<PageProps<"/painel/os/nova"
         nome: carro?.dono.nome ?? "",
         telefone: carro ? formatarTelefone(carro.dono.telefone) : "",
         problema: "",
+        tanque: "",
         km: "",
         obs: "",
       }}

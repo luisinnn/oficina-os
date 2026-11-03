@@ -1,9 +1,11 @@
 "use client";
-// Formulário da nova OS. Os 5 campos do dia a dia ficam à vista; km e
-// observação interna ficam no bloco recolhido "Mais detalhes".
+// Formulário da nova OS. Os 6 campos obrigatórios (com a km de entrada) e o
+// tanque ficam à vista; a observação interna fica no bloco recolhido
+// "Mais detalhes".
 
 import Link from "next/link";
 import { useActionState } from "react";
+import { AvisoKm, CampoKm, CampoTanque } from "../../campos-entrada";
 import {
   type CampoOrdem,
   MODELO_MAX,
@@ -61,6 +63,8 @@ export function FormNovaOs({ inicial }: { inicial: ValoresOrdem }) {
         />
       </Campo>
 
+      <CampoKm valor={valores.km} erro={erros.km} />
+
       <Campo rotulo="Nome do cliente" campo="nome" erro={erros.nome}>
         <input
           name="nome"
@@ -99,27 +103,14 @@ export function FormNovaOs({ inicial }: { inicial: ValoresOrdem }) {
         />
       </Campo>
 
+      <CampoTanque valor={valores.tanque} erro={erros.tanque} />
+
       {/* Abre sozinho se já tem algo digitado ou com erro aqui dentro. */}
-      <details
-        open={Boolean(valores.km || valores.obs || erros.km || erros.obs)}
-        className="rounded-md border border-zinc-200 px-3"
-      >
+      <details open={Boolean(valores.obs || erros.obs)} className="rounded-md border border-zinc-200 px-3">
         <summary className="flex min-h-12 cursor-pointer items-center text-sm font-medium text-zinc-700">
           Mais detalhes
         </summary>
         <div className="space-y-4 pb-4">
-          <Campo rotulo="Km" campo="km" erro={erros.km}>
-            <input
-              name="km"
-              inputMode="numeric"
-              maxLength={12}
-              autoComplete="off"
-              placeholder="120.000"
-              defaultValue={valores.km}
-              className={classeCampo}
-              {...erroDe("km")}
-            />
-          </Campo>
           <Campo rotulo="Observação interna (o cliente não vê)" campo="obs" erro={erros.obs}>
             <textarea
               name="obs"
@@ -148,7 +139,14 @@ export function FormNovaOs({ inicial }: { inicial: ValoresOrdem }) {
         </div>
       )}
 
-      {estado.confirmarTroca ? (
+      {/* Km já conferida no aviso: continua valendo na pergunta de troca de dono. */}
+      {!estado.avisoKm && estado.kmConferida !== undefined && (
+        <input type="hidden" name="km_conferida" value={estado.kmConferida} />
+      )}
+
+      {estado.avisoKm ? (
+        <AvisoKm aviso={estado.avisoKm} pendente={pendente} />
+      ) : estado.confirmarTroca ? (
         // Nome ou telefone diferente do dono: os dois botões reenviam o formulário
         // com a resposta. A chave faz a resposta valer só para estes dados; se a
         // pessoa mudar placa, nome ou telefone, o servidor pergunta de novo.

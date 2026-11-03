@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
+import { KM_MAX } from "./km";
 import {
   chaveTroca,
-  KM_MAX,
+
   MODELO_MAX,
   NOME_CLIENTE_MAX,
   OBS_MAX,
@@ -22,10 +23,11 @@ const valido = {
   nome: " João da Silva ",
   telefone: "(47) 99999-0000",
   problema: " Barulho no freio ",
+  km: "120.300",
 };
 
 describe("validarNovaOrdem", () => {
-  it("aceita os 5 campos e devolve os dados prontos para o banco", () => {
+  it("aceita os 6 campos e devolve os dados prontos para o banco", () => {
     const r = validarNovaOrdem(form(valido));
 
     expect(r.erros).toEqual({});
@@ -35,31 +37,41 @@ describe("validarNovaOrdem", () => {
       nome: "João da Silva",
       telefone: "47999990000",
       problema: "Barulho no freio",
-      km: null,
+      km: 120300,
+      tanque: null,
       obs_interna: null,
       trocar_dono: null,
     });
+    expect(r.kmConferida).toBe(false);
   });
 
-  it("lê km e observação interna (Mais detalhes)", () => {
-    const r = validarNovaOrdem(form({ ...valido, km: "120.000", obs: "  Cliente com pressa  " }));
-    expect(r.dados?.km).toBe(120000);
+  it("lê tanque e observação interna", () => {
+    const r = validarNovaOrdem(form({ ...valido, tanque: "1/4", obs: "  Cliente com pressa  " }));
+    expect(r.dados?.tanque).toBe("1/4");
     expect(r.dados?.obs_interna).toBe("Cliente com pressa");
   });
 
-  it.each([
-    ["120000", 120000],
-    ["120 000", 120000],
-    ["0", 0],
-    [String(KM_MAX), KM_MAX],
-  ])("aceita km %j", (km, esperado) => {
-    expect(validarNovaOrdem(form({ ...valido, km })).dados?.km).toBe(esperado);
+  it("km é obrigatória", () => {
+    const r = validarNovaOrdem(form({ ...valido, km: "" }));
+    expect(r.dados).toBeUndefined();
+    expect(r.erros).toEqual({ km: "Informe a km do painel." });
   });
 
   it.each(["abc", "-5", "12,5", String(KM_MAX + 1)])("recusa km %j", (km) => {
     const r = validarNovaOrdem(form({ ...valido, km }));
     expect(r.dados).toBeUndefined();
-    expect(r.erros).toEqual({ km: "Km inválido: use só números." });
+    expect(r.erros).toEqual({ km: "Km inválida: use só números." });
+  });
+
+  it("recusa tanque fora das opções", () => {
+    expect(validarNovaOrdem(form({ ...valido, tanque: "meio" })).erros).toEqual({
+      tanque: "Escolha uma das opções do tanque.",
+    });
+  });
+
+  it("km conferida só vale para a km que foi avisada", () => {
+    expect(validarNovaOrdem(form({ ...valido, km_conferida: "120300" })).kmConferida).toBe(true);
+    expect(validarNovaOrdem(form({ ...valido, km_conferida: "120299" })).kmConferida).toBe(false);
   });
 
   it("observação só com espaços vira null", () => {
@@ -100,6 +112,7 @@ describe("validarNovaOrdem", () => {
       nome: "Informe o nome do cliente.",
       telefone: "Telefone inválido: use DDD + número (10 ou 11 dígitos).",
       problema: "Descreva o problema.",
+      km: "Informe a km do painel.",
     });
   });
 
@@ -121,7 +134,7 @@ describe("validarNovaOrdem", () => {
   });
 
   it("devolve o que foi digitado para o formulário mostrar de novo", () => {
-    const digitado = { ...valido, telefone: "(47) 9999", km: "12a", obs: "anotação" };
+    const digitado = { ...valido, telefone: "(47) 9999", km: "12a", tanque: "1/2", obs: "anotação" };
     expect(validarNovaOrdem(form(digitado)).valores).toEqual({
       placa: "abc-1d23",
       modelo: "Gol 1.0",
@@ -129,6 +142,7 @@ describe("validarNovaOrdem", () => {
       telefone: "(47) 9999",
       problema: "Barulho no freio",
       km: "12a",
+      tanque: "1/2",
       obs: "anotação",
     });
   });

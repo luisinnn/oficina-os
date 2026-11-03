@@ -7,16 +7,22 @@ const dados: DadosMensagem = {
   placa: "ABC1D23",
   oficina: "Oficina do Zé",
   numero: 42,
+  km: 120300,
   totalCentavos: 123456,
   link: "https://oficina.exemplo/aprovar/abc_DEF-123",
 };
 
 describe("mensagemOrcamento", () => {
-  it("monta o texto fixo com primeiro nome, carro, oficina, OS, total e link", () => {
+  it("monta o texto fixo com primeiro nome, carro, oficina, OS, km, total e link", () => {
     expect(mensagemOrcamento(dados)).toBe(
-      "Olá, João! Segue o orçamento do Gol 1.0 (ABC1D23) na Oficina do Zé, OS #42: total R$ 1.234,56. " +
+      "Olá, João! Segue o orçamento do Gol 1.0 (ABC1D23) na Oficina do Zé, OS #42, entrada com 120.300 km: " +
+        "total R$ 1.234,56. " +
         "Para aprovar ou recusar: https://oficina.exemplo/aprovar/abc_DEF-123",
     );
+  });
+
+  it("OS antiga sem km: a mensagem não fala de km", () => {
+    expect(mensagemOrcamento({ ...dados, km: null })).toContain("OS #42: total R$ 1.234,56.");
   });
 
   it("primeiro nome ignora espaços sobrando", () => {

@@ -25,6 +25,7 @@ async function osEnviada(u: UsuarioComOficina = a) {
     nome: "João da Silva",
     telefone: "47911112222",
     problema: "Barulho no freio",
+    km: 50000,
     obs_interna: "Cliente chato com prazo",
   });
   if (error) throw new Error(`criar_ordem: ${error.message}`);
@@ -77,7 +78,7 @@ beforeAll(async () => {
 });
 
 describe("ver_orcamento", () => {
-  it("devolve só oficina, OS, carro, itens, total, estado e expirado", async () => {
+  it("devolve só oficina, OS, carro, km, itens, total, estado e expirado", async () => {
     const { ordem, token } = await osEnviada();
     const { data, error } = await ver(token);
     expect(error).toBeNull();
@@ -88,6 +89,7 @@ describe("ver_orcamento", () => {
       numero: os!.numero,
       placa: expect.stringMatching(/^APR\d{4}$/),
       modelo: "Gol 1.0",
+      km: 50000,
       itens: ITENS,
       total_centavos: TOTAL,
       estado: "enviado",

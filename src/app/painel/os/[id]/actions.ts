@@ -2,7 +2,16 @@
 
 import { revalidatePath } from "next/cache";
 import { getOficina } from "@/lib/oficina";
-import { buscarOrcamento, buscarOrdem } from "@/lib/ordens";
+import {
+  type AvisoDeKm,
+  type ErrosEntrada,
+  kmFoiConferida,
+  lerEntrada,
+  TEXTO_KM_TRAVADA,
+  type ValoresEntrada,
+} from "@/lib/km";
+import { estaAberta } from "@/lib/status-ordem";
+import { avisoDeKm, buscarOrcamento, buscarOrdem } from "@/lib/ordens";
 import { urlDoSite } from "@/lib/site";
 import { createClient } from "@/lib/supabase/server";
 import { linkAprovacao, linkWhatsApp, mensagemOrcamento } from "@/lib/whatsapp";
@@ -67,8 +76,53 @@ export async function enviarOrcamento(_estadoAnterior: EstadoEnvio, formData: Fo
     placa: os.veiculos.placa,
     oficina: oficina.nome,
     numero: os.numero,
+    km: os.km,
     totalCentavos: orcamento.total_centavos,
     link: linkAprovacao(site, token as string),
   });
   return { url: linkWhatsApp(os.clientes.telefone, texto) };
+}
+
+export type EstadoEntrada = {
+  erro?: string;
+  erros?: ErrosEntrada;
+  valores?: ValoresEntrada;
+  avisoKm?: AvisoDeKm;
+  salvo?: boolean;
+};
+
+// Corrige a km de entrada e anota o tanque depois, com a OS aberta. A km só
+// muda até o orçamento ser enviado ao cliente; o banco também recusa (trigger
+// conferir_km_tanque), aqui é só para responder com a mensagem certa.
+export async function salvarEntrada(_estadoAnterior: EstadoEntrada, formData: FormData): Promise<EstadoEntrada> {
+  await getOficina();
+  const ordemId = String(formData.get("ordem_id") ?? "");
+
+  const [os, orcamento] = await Promise.all([buscarOrdem(ordemId), buscarOrcamento(ordemId)]);
+  if (!os || !orcamento) return { erro: "OS não encontrada." };
+  if (!estaAberta(os.status)) return { erro: "A OS já foi fechada." };
+
+  const { valores, erros, dados } = lerEntrada(formData, orcamento.enviado_em === null);
+  if (!dados) return { valores, erros };
+
+  const campos: { km?: number; tanque?: string } = {};
+  if (dados.km !== null && dados.km !== os.km) campos.km = dados.km;
+  // Nenhuma opção marcada = não mexe (não dá para "desanotar" o tanque).
+  if (dados.tanque && dados.tanque !== os.tanque) campos.tanque = dados.tanque;
+  if (Object.keys(campos).length === 0) return { salvo: true };
+
+  if (campos.km !== undefined && !kmFoiConferida(formData, campos.km)) {
+    const avisoKm = await avisoDeKm(os.veiculos.placa, campos.km, os.id);
+    if (avisoKm) return { valores, avisoKm };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.from("ordens").update(campos).eq("id", ordemId);
+  revalidatePath("/painel", "layout");
+
+  if (!error) return { salvo: true };
+  if (error.code === "OS006") return { valores, erro: TEXTO_KM_TRAVADA };
+  if (error.code === "OS007") return { valores, erro: "A OS já foi fechada." };
+  console.error("salvarEntrada:", error.code ?? error.message);
+  return { valores, erro: "Não foi possível salvar. Tente de novo." };
 }
