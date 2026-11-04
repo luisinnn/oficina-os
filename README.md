@@ -108,7 +108,7 @@ Como funciona: cada push na `main` roda o CI. Se ele passar, o [`.github/workflo
    ```
 3. Authentication → URL Configuration: **Site URL** `https://<domínio>` e, em Redirect URLs, só `https://<domínio>/auth/callback`.
 4. Authentication → Sign In / Providers → Email: **Confirm email** ligado, senha mínima **8**.
-5. O e-mail padrão do Supabase só entrega para os membros do time do projeto (e poucos por hora). Por isso, as contas (a do primo e as de teste) são criadas em Authentication → Users → **Add user → Create new user**, com **Auto Confirm User** marcado. O botão "Criar conta" da tela de login continua lá, mas quem tentar por ele não recebe o e-mail de confirmação. Para cadastro aberto, é preciso configurar um SMTP próprio (fora da v1).
+5. O e-mail padrão do Supabase só entrega para os membros do time do projeto (e poucos por hora). Por isso, as contas (a do primo e as de teste) são criadas em Authentication → Users → **Add user → Create new user**, com **Auto Confirm User** marcado. A tela de login não tem cadastro, e em Authentication → Sign In / Providers o **Allow new users to sign up** fica **desligado**: assim ninguém cria conta nem pela API. Para cadastro aberto, seria preciso religar isso, configurar um SMTP próprio e voltar o formulário de cadastro (fora da v1).
 6. No plano grátis, o Supabase pausa o projeto depois de 7 dias sem uso. O uso diário da oficina evita isso. Se o projeto pausar (por exemplo, nas férias), dá para reativar no painel do Supabase.
 
 ### 2. VPS (uma vez)

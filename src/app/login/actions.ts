@@ -3,11 +3,12 @@
 // chama a função, mas o código (e as chaves) nunca vão para o navegador.
 
 import { redirect } from "next/navigation";
-import { urlDoSite } from "@/lib/site";
 import { createClient } from "@/lib/supabase/server";
 
 // Formato da resposta que volta para o formulário mostrar na tela.
-export type EstadoAuth = { erro?: string; mensagem?: string };
+// email: o que foi digitado, para o campo voltar preenchido depois de um erro
+// (o React limpa o formulário a cada envio).
+export type EstadoAuth = { erro?: string; email?: string };
 
 function lerCampos(formData: FormData) {
   return {
@@ -21,7 +22,7 @@ export async function entrar(
   formData: FormData,
 ): Promise<EstadoAuth> {
   const { email, senha } = lerCampos(formData);
-  if (!email || !senha) return { erro: "Preencha e-mail e senha." };
+  if (!email || !senha) return { erro: "Preencha e-mail e senha.", email };
 
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword({
@@ -31,63 +32,11 @@ export async function entrar(
 
   if (error) {
     // Mensagem genérica de propósito: não revela se o e-mail existe.
-    return { erro: "E-mail ou senha inválidos (ou e-mail ainda não confirmado)." };
+    return { erro: "E-mail ou senha incorretos. Confira e tente de novo.", email };
   }
 
   // Login OK: o Supabase já gravou o cookie de sessão. Vai para o painel.
   redirect("/painel");
-}
-
-// Mesmo valor do minLength em form-login.tsx e do minimum_password_length do
-// Supabase (supabase/config.toml no local; painel do Supabase em produção).
-const SENHA_MIN = 8;
-
-export async function cadastrar(
-  _estadoAnterior: EstadoAuth,
-  formData: FormData,
-): Promise<EstadoAuth> {
-  const { email, senha } = lerCampos(formData);
-  if (!email || !senha) return { erro: "Preencha e-mail e senha." };
-  if (senha.length < SENHA_MIN)
-    return { erro: `A senha precisa ter pelo menos ${SENHA_MIN} caracteres.` };
-
-  const site = urlDoSite();
-  if (!site) {
-    console.error("cadastrar: defina NEXT_PUBLIC_SITE_URL nas variáveis de ambiente.");
-    return { erro: "Cadastro indisponível no momento. Tente mais tarde." };
-  }
-
-  const supabase = await createClient();
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password: senha,
-    options: { emailRedirectTo: `${site}/auth/callback` },
-  });
-
-  if (error) {
-    // Senha fraca ou vazada (proteção do painel do Supabase): pode avisar,
-    // porque isso fala da senha digitada, não de quem já tem conta.
-    if (error.code === "weak_password") {
-      return { erro: "Senha fraca ou já vazada em outros sites. Escolha outra." };
-    }
-    // Limite de tentativas/e-mails do Supabase: também pode avisar, porque
-    // vale para qualquer e-mail (não revela quem tem conta).
-    if (error.code === "over_email_send_rate_limit" || error.code === "over_request_rate_limit") {
-      return { erro: "Muitas tentativas agora. Tente de novo mais tarde." };
-    }
-    // Qualquer outro erro: mensagem genérica de propósito. O texto original
-    // pode dizer "usuário já cadastrado" e revelar quais e-mails existem.
-    console.error("cadastrar:", error.code ?? error.message);
-    return { erro: "Não foi possível criar a conta. Confira os dados e tente de novo." };
-  }
-
-  // Se a confirmação de e-mail estiver DESLIGADA no Supabase, já vem sessão.
-  if (data.session) redirect("/painel");
-
-  // Se estiver LIGADA (padrão), o usuário precisa clicar no link do e-mail.
-  return {
-    mensagem: "Conta criada! Confira seu e-mail e clique no link para ativar.",
-  };
 }
 
 export async function sair() {
