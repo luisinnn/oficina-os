@@ -29,6 +29,6 @@ scripts do workflow, confere que nada aparece legível e restaura num banco
 vazio. O passo a passo do README (gerar → `db:reset` → `restaurar.sh`) também
 foi feito à mão no Supabase local, e as contagens e os números das OS bateram.
 
-- [ ] Rodada manual gera artefato `.sql.gpg`; abrir sem a senha não mostra nada legível.
-- [ ] Restauração testada no Supabase local a partir do artefato.
-- [ ] Nenhum segredo aparece no log do Actions.
+- [x] Rodada manual gera artefato `.sql.gpg`; abrir sem a senha não mostra nada legível.
+- [x] Restauração testada no Supabase local a partir do artefato.
+- [x] Nenhum segredo aparece no log do Actions.

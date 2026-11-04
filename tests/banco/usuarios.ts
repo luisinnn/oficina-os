@@ -6,7 +6,9 @@ const url = process.env.SUPABASE_URL!;
 const chave = process.env.SUPABASE_PUBLISHABLE_KEY!;
 const mailpit = process.env.MAILPIT_URL!;
 
-export const SENHA = "senha-de-teste-123";
+// Em produção (npm run test:producao) a senha é a das contas de teste criadas
+// no painel do Supabase.
+export const SENHA = process.env.SENHA_CONTAS ?? "senha-de-teste-123";
 
 export function clienteAnonimo(): SupabaseClient {
   return createClient(url, chave, { auth: { persistSession: false } });
@@ -17,6 +19,10 @@ export type UsuarioTeste = { id: string; email: string; supabase: SupabaseClient
 // Cria uma conta nova, confirma pelo link do e-mail (lido no Mailpit) e faz
 // login com senha. Devolve um cliente Supabase autenticado como esse usuário.
 export async function criarUsuarioConfirmado(apelido: string): Promise<UsuarioTeste> {
+  // Produção não tem Mailpit: usa a conta já criada no painel (CONTA_segA...).
+  const existente = process.env[`CONTA_${apelido}`];
+  if (existente) return entrar(existente);
+
   const email = `${apelido}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}@teste.local`;
 
   const cadastro = await clienteAnonimo().auth.signUp({ email, password: SENHA });
@@ -26,7 +32,10 @@ export async function criarUsuarioConfirmado(apelido: string): Promise<UsuarioTe
   // Não seguimos o redirecionamento (ele vai para o app, que não está rodando).
   const link = await linkDeConfirmacao(email);
   await fetch(link, { redirect: "manual" });
+  return entrar(email);
+}
 
+async function entrar(email: string): Promise<UsuarioTeste> {
   const supabase = clienteAnonimo();
   const login = await supabase.auth.signInWithPassword({ email, password: SENHA });
   if (login.error) throw new Error(`login falhou: ${login.error.code}`);

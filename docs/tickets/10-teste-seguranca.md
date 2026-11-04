@@ -39,7 +39,13 @@ as rotas públicas só fazem o que devem. Obrigatório passar antes do deploy (1
 No ambiente local, os quatro primeiros itens rodam num navegador de verdade
 (Playwright) em `tests/seguranca/navegador.e2e.ts`: `npm run dev` e depois
 `npm run test:navegador`. O script cria as contas A e B pelo Mailpit do
-Supabase local, então em produção a lista continua sendo feita à mão.
+Supabase local.
+
+Em produção, o mesmo script roda com `npm run test:producao`, usando duas
+contas criadas à mão no painel do Supabase. Rodado em 2026-11-04 contra
+https://superautomec.com.br: 4/4 ok. O scan de segredos também deu vazio no
+repositório e no JavaScript servido pelo site. Depois, as contas e as oficinas
+de teste foram apagadas.
 
 - [x] Com o DevTools aberto, navegar logado como A: nenhuma resposta de rede contém dados de B.
 - [x] Abrir `/painel/os/<id de B>` logado como A → "não encontrado".

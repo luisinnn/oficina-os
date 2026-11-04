@@ -8,7 +8,7 @@ Primeiro cliente real: oficina do primo. Feito em cima do template
 
 - Um commit (ou poucos) por ticket, na `main`, citando o ticket: `#03 Cria tabelas de OS`.
 - Push só depois do ticket fechado, com lint/tipos/testes passando, e com OK do Luis.
-- Nada em produção até o ticket 12. Depois que estiver em produção, passamos a usar branch + pull request.
+- Produção: https://superautomec.com.br (no ar desde o ticket 12). Quando o ticket 12 fechar, passamos a usar branch + pull request.
 - Desenvolvimento 100% no Supabase local (Docker). Nenhuma chave real no PC até o deploy.
 
 ## Ordem e dependências
@@ -25,7 +25,7 @@ Primeiro cliente real: oficina do primo. Feito em cima do template
 | 08 | [Página pública de aprovação](08-aprovacao-publica.md) | banco, tela, segurança | 07 | [x] |
 | 09 | [Pré-cadastro público e confirmação](09-pre-cadastro.md) | banco, tela, segurança | 04 | [x] |
 | 10 | [Teste de segurança](10-teste-seguranca.md) | segurança | 08, 09 | [x] |
-| 11 | [Backup semanal](11-backup.md) | infra | 01 | [ ] |
+| 11 | [Backup semanal](11-backup.md) | infra | 01 | [x] |
 | 12 | [Deploy em produção](12-deploy.md) | infra, segurança | todos | [ ] |
 | 13 | [Melhoria visual do painel](13-melhoria-visual-painel.md) | tela | 09 | [x] |
 | 14 | [Histórico das OS fechadas](14-historico-os-fechadas.md) | banco, tela | 13 | [x] |

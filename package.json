@@ -12,6 +12,7 @@
     "typecheck": "next typegen && tsc --noEmit",
     "test:db": "vitest run --config vitest.db.config.mts",
     "test:navegador": "vitest run --config vitest.navegador.config.mts",
+    "test:producao": "vitest run --config vitest.producao.config.mts",
     "db:start": "supabase start",
     "db:stop": "supabase stop",
     "db:reset": "supabase db reset"

@@ -25,6 +25,6 @@ Colocar no ar para o primo usar, com o banco de produção idêntico ao testado.
 
 - [ ] Fluxo completo em produção no celular: nova OS → orçamento → WhatsApp → aprovação → status até entregue.
 - [ ] Pré-cadastro em produção chega ao painel.
-- [ ] Lista manual de segurança 100% ok.
-- [ ] Backup gerado e restaurado localmente uma vez.
-- [ ] README com o endereço de produção e o passo a passo de deploy.
+- [x] Lista manual de segurança 100% ok.
+- [x] Backup gerado e restaurado localmente uma vez.
+- [x] README com o endereço de produção e o passo a passo de deploy.
