@@ -12,7 +12,7 @@ export default function PainelLayout({ children }: LayoutProps<"/painel">) {
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-2">
           {/* Ler a oficina depende do usuário logado, então fica atrás de um
               Suspense: o cabeçalho aparece na hora e o nome chega depois. */}
-          <Suspense fallback={<NomeOficina nome="oficina-os" />}>
+          <Suspense fallback={<NomeOficina nome="Pátio" />}>
             <OficinaAtual />
           </Suspense>
           <nav className="flex shrink-0 items-center gap-3 sm:gap-4">

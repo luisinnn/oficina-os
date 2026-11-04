@@ -9,7 +9,7 @@ import { foiEnviado } from "@/lib/orcamento";
 import { EtiquetaOrcamento } from "./etiqueta-orcamento";
 import { FormBuscaPlaca } from "./form-busca-placa";
 
-export const metadata: Metadata = { title: "Painel | oficina-os" };
+export const metadata: Metadata = { title: "Painel | Pátio" };
 
 // Cor de cada status: faixa do cartão e do contador.
 const FAIXA: Record<StatusAberto, string> = {

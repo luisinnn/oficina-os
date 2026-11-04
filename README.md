@@ -1,4 +1,4 @@
-# oficina-os
+# Pátio (oficina-os)
 
 Sistema de ordens de serviço (OS) para oficina mecânica de beira de estrada, pensado para usar no celular.
 

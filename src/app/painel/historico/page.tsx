@@ -20,7 +20,7 @@ import {
 } from "@/lib/historico";
 import { buscarFechadas, LIMITE_BUSCA_HISTORICO, listarFechadasDoMes, type OrdemFechada } from "@/lib/ordens";
 
-export const metadata: Metadata = { title: "Histórico | oficina-os" };
+export const metadata: Metadata = { title: "Histórico | Pátio" };
 
 const ROTA = "/painel/historico";
 

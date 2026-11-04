@@ -4,7 +4,7 @@ import { formatarTelefone, normalizarPlaca, validarPlaca } from "@/lib/formatos"
 import { buscarCarro } from "@/lib/ordens";
 import { FormNovaOs } from "./form-nova-os";
 
-export const metadata: Metadata = { title: "Nova OS | oficina-os" };
+export const metadata: Metadata = { title: "Nova OS | Pátio" };
 
 export default function NovaOsPage({ searchParams }: PageProps<"/painel/os/nova">) {
   return (

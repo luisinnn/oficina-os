@@ -17,7 +17,7 @@ const barlowCondensada = Barlow_Condensed({
 });
 
 export const metadata: Metadata = {
-  title: "oficina-os",
+  title: "Pátio",
   description: "Ordens de serviço da oficina",
 };
 

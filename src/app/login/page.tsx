@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { FormLogin } from "./form-login";
 
-export const metadata: Metadata = { title: "Entrar | oficina-os" };
+export const metadata: Metadata = { title: "Entrar | Pátio" };
 
 // Página estática. Quem já está logado é redirecionado para /painel pelo
 // proxy, antes de chegar aqui. Não tem cadastro: as contas são criadas no
@@ -13,8 +13,8 @@ export default function LoginPage() {
         {/* A marca do sistema desenhada como a placa do painel. */}
         <p className="mb-8 inline-flex flex-col overflow-hidden rounded border-2 border-grafite bg-chapa">
           <span aria-hidden="true" className="h-2.5 bg-placa" />
-          <span className="px-4 py-1 font-condensada text-destaque font-bold leading-none tracking-wide">
-            OFICINA OS
+          <span className="px-4 pt-2 pb-1 font-condensada text-destaque font-bold leading-none tracking-wide">
+            PÁTIO
           </span>
         </p>
         <FormLogin />

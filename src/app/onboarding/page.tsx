@@ -5,7 +5,7 @@ import { FormOficina } from "@/components/form-oficina";
 import { buscarOficina } from "@/lib/oficina";
 import { criarOficina } from "./actions";
 
-export const metadata: Metadata = { title: "Sua oficina | oficina-os" };
+export const metadata: Metadata = { title: "Sua oficina | Pátio" };
 
 // Primeira tela depois do cadastro: o usuário informa a oficina dele.
 // Quem já tem oficina vai direto para o painel.

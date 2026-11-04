@@ -7,7 +7,7 @@ import { textoEntrada } from "@/lib/km";
 import { buscarCarro } from "@/lib/ordens";
 import { ROTULO_STATUS, textoOsAberta } from "@/lib/status-ordem";
 
-export const metadata: Metadata = { title: "Placa | oficina-os" };
+export const metadata: Metadata = { title: "Placa | Pátio" };
 
 const classeBotao =
   "flex min-h-12 w-full items-center justify-center rounded-md bg-placa px-4 py-2 font-medium text-white hover:bg-placa-escuro";

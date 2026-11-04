@@ -11,7 +11,7 @@ import { AcoesStatus } from "./acoes-status";
 import { EditarEntrada } from "./editar-entrada";
 import { SecaoOrcamento } from "./secao-orcamento";
 
-export const metadata: Metadata = { title: "OS | oficina-os" };
+export const metadata: Metadata = { title: "OS | Pátio" };
 
 // Detalhe da OS: botões de status, dados da visita e orçamento.
 export default function OrdemPage({ params }: PageProps<"/painel/os/[id]">) {

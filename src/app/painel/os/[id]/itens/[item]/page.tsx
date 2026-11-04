@@ -7,7 +7,7 @@ import { foiEnviado } from "@/lib/orcamento";
 import { buscarItem } from "@/lib/ordens";
 import { FormItem, RemoverItem } from "../form-item";
 
-export const metadata: Metadata = { title: "Editar item | oficina-os" };
+export const metadata: Metadata = { title: "Editar item | Pátio" };
 
 export default function EditarItemPage({ params }: PageProps<"/painel/os/[id]/itens/[item]">) {
   return (

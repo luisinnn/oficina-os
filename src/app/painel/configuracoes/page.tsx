@@ -7,7 +7,7 @@ import { urlDoSite } from "@/lib/site";
 import { salvarOficina } from "./actions";
 import { LinkPreCadastro } from "./link-pre-cadastro";
 
-export const metadata: Metadata = { title: "Configurações | oficina-os" };
+export const metadata: Metadata = { title: "Configurações | Pátio" };
 
 // Dados da oficina e link de pré-cadastro.
 export default function ConfiguracoesPage() {

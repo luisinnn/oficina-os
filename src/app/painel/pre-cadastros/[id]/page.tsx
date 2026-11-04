@@ -8,7 +8,7 @@ import { buscarCarro, buscarPreCadastro } from "@/lib/ordens";
 import { textoOsAberta } from "@/lib/status-ordem";
 import { AcoesPreCadastro } from "./acoes-pre-cadastro";
 
-export const metadata: Metadata = { title: "Pré-cadastro | oficina-os" };
+export const metadata: Metadata = { title: "Pré-cadastro | Pátio" };
 
 // Detalhe do pré-cadastro: dados enviados pelo cliente e Confirmar/Descartar.
 export default function PreCadastroPage({ params }: PageProps<"/painel/pre-cadastros/[id]">) {

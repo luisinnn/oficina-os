@@ -6,7 +6,7 @@ import { ehTipoItem, foiEnviado } from "@/lib/orcamento";
 import { buscarOrcamento, buscarOrdem } from "@/lib/ordens";
 import { FormItem } from "../form-item";
 
-export const metadata: Metadata = { title: "Novo item | oficina-os" };
+export const metadata: Metadata = { title: "Novo item | Pátio" };
 
 // /painel/os/<id>/itens/novo?tipo=peca (ou mao_de_obra): vem dos botões
 // "+ Peça" e "+ Mão de obra" do orçamento.
